@@ -24,3 +24,7 @@ See:
 - Database name: `skadi`
 
 Full installation and usage instructions will be maintained in `readme.txt` before the presentation release.
+
+## License
+
+Skadi is released under the [MIT License](LICENSE).
