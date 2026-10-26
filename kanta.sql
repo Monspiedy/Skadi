@@ -1,0 +1,3 @@
+-- Skadi database dump
+-- Status: placeholder created during phase 00.
+-- Phase 01 will replace this file with the complete, importable schema and seed data.

@@ -1,0 +1,34 @@
+# Local configuration and secrets
+config/database.local.php
+.env
+.env.*
+!.env.example
+
+# User uploads are local runtime data, not source code
+uploads/avatars/*
+uploads/covers/*
+uploads/screenshots/*
+storage/chat-attachments/*
+!uploads/avatars/.gitkeep
+!uploads/covers/.gitkeep
+!uploads/screenshots/.gitkeep
+!storage/chat-attachments/.gitkeep
+
+# Logs, caches and temporary files
+storage/logs/*
+storage/cache/*
+!storage/logs/.gitkeep
+!storage/cache/.gitkeep
+*.log
+*.tmp
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencies, if introduced later
+vendor/
+node_modules/
