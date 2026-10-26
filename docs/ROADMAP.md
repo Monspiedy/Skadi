@@ -12,8 +12,8 @@ The primary date is aggressive. Core course requirements must remain more import
 
 | Phase | Target | Outcome | Status |
 |---:|---|---|---|
-| 00 | Oct 26 | Repository foundation, specification and phase prompts | In progress |
-| 01 | Oct 27 | Importable schema and seed strategy | Not started |
+| 00 | Oct 26 | Repository foundation, specification and phase prompts | Complete |
+| 01 | Oct 27 | Importable schema and seed strategy | Complete locally; awaiting review |
 | 02 | Oct 28 | PHP bootstrap, shared includes and error handling | Not started |
 | 03 | Oct 28-29 | Registration, login, sessions and security helpers | Not started |
 | 04 | Oct 29 | Themes, shared Bootstrap layout and navigation | Not started |

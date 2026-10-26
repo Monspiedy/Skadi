@@ -39,17 +39,21 @@ uploads/               Public validated images
 - InnoDB tables and UTF-8 (`utf8mb4`)
 - unsigned integer primary keys unless a different type is justified
 - foreign keys and useful indexes
-- timestamps stored consistently
+- timestamps stored in UTC and presented in `Europe/Helsinki`
 - decimal money values, never floating point
 - unique constraints for login, email, Skadi ID, ownership and one-vote relations
 - soft status fields for moderated public content where auditability matters
 - real deletion for a chat message deleted for everyone, including its attachment
+- canonical low/high user pairs for friendships, blocks and conversations
+- admin views that omit login names, password hashes and private-chat data
 
-## Preliminary tables
+## Implemented Phase 01 schema
 
 Identity and social:
 
 - `users`
+- `roles`
+- `user_profiles`
 - `friendships`
 - `user_blocks`
 
@@ -58,7 +62,7 @@ Store:
 - `games`
 - `genres`
 - `game_genres`
-- `game_screenshots`
+- `game_media`
 - `featured_games`
 - `weekly_sales`
 - `weekly_discounts`
@@ -72,9 +76,10 @@ Store:
 
 Chat:
 
+- `conversations`
 - `messages`
 - `message_attachments`
-- `message_user_state` or equivalent per-user hidden/read state
+- `message_user_states`
 
 Community:
 
@@ -87,9 +92,14 @@ Community:
 - `community_posts`
 - `community_post_likes`
 - `community_comments`
+- `community_comment_likes`
 - `content_reports`
 
-The exact schema, constraints and indexes are owned by phase 01. Avoid adding tables ad hoc in later phases without updating both this document and `kanta.sql`.
+The complete definitions, constraints, seed strategy and ER-style relationship list are in `database/SCHEMA.md`. Avoid adding tables ad hoc in later phases without updating that document and `kanta.sql` together.
+
+## Database responsibility split
+
+The database enforces row-local values, foreign-key integrity, unique relationships, ownership before review, canonical social pairs and report target integrity. PHP transactions must enforce rules that span changing data: no owned game in a cart, accepted/unblocked friendship before chat, paid games only in weekend discounts, the 100-friend maximum and atomic checkout. This split keeps the schema strict without hiding application behavior in triggers.
 
 ## Key invariants
 
