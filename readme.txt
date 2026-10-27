@@ -3,8 +3,9 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 01 database foundation is complete. Application pages have not been built,
-so the website itself is not yet usable.
+Phase 02 PHP foundation is complete. The site has a reusable shared layout,
+safe error pages and a development health check. Authentication and store pages
+will be added in later phases.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -21,6 +22,15 @@ DATABASE INSTALLATION
 3. Copy config/database.example.php to config/database.local.php.
 4. Enter local database credentials in config/database.local.php.
 5. Open http://localhost/Skadi/.
+
+CURRENT PAGES
+-------------
+- http://localhost/Skadi/ - minimal foundation home page
+- http://localhost/Skadi/health.php - non-sensitive environment health check
+- /errors/403.php, /errors/404.php and /errors/500.php - shared error pages
+
+The home and error pages do not require a database connection. On the health page,
+select the database connectivity test only after creating database.local.php.
 
 The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because

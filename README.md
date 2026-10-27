@@ -6,7 +6,7 @@ The planned application includes a game catalog, demo wallet and cart, purchases
 
 ## Current status
 
-The repository foundation and implementation plan are being prepared. Application code and the database schema will be added phase by phase.
+The database foundation and reusable PHP bootstrap are implemented. The project now has shared page includes, centralized sessions, CSRF and validation helpers, lazy PDO configuration, safe error pages and a development health check. Authentication is the next implementation phase.
 
 See:
 

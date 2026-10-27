@@ -1,0 +1,6 @@
+DirectoryIndex index.php
+Options -Indexes
+
+ErrorDocument 403 /Skadi/errors/403.php
+ErrorDocument 404 /Skadi/errors/404.php
+ErrorDocument 500 /Skadi/errors/500.php

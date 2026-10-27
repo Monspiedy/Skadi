@@ -34,6 +34,17 @@ uploads/               Public validated images
 
 `config/database.example.php` will be committed. The developer copies it to ignored `config/database.local.php`. No database password is committed. Base URLs are derived from a single application setting and never hard-coded across pages.
 
+## Implemented Phase 02 PHP foundation
+
+- `config/bootstrap.php` loads application settings, error handling, helpers, lazy PDO support and the session.
+- `config/database.php` reads only the ignored local configuration and creates a strict PDO connection on demand.
+- Focused helpers in `includes/` cover URLs, output escaping, flash messages, CSRF, validation and authentication/role guard stubs.
+- Shared header, navigation, flash-message and footer includes provide the page shell.
+- `errors/403.php`, `errors/404.php` and `errors/500.php` render the same safe layout without exposing exception details.
+- `health.php` reports non-sensitive PHP requirements and tests database connectivity only when explicitly requested.
+
+The foundation remains procedural and intentionally small. Later phases should add focused helpers instead of turning `bootstrap.php` into application logic.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)
