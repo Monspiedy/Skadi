@@ -6,7 +6,7 @@ The planned application includes a game catalog, demo wallet and cart, purchases
 
 ## Current status
 
-The database foundation, reusable PHP bootstrap, authentication, shared responsive interface and read-only game catalog are implemented. Registration creates the account, profile and auditable EUR 100.00 wallet credit atomically. Login, forced first-login password change, protected access and CSRF-protected logout use the shared session helpers. Official Bootstrap 5.3.8 is stored locally, and guests or signed-in users can choose the original Skadi, Dark or Light theme. The storefront provides featured games, search, genre and price filters, five safe sort orders, pagination and complete read-only game pages.
+The database foundation, reusable PHP bootstrap, authentication, shared responsive interface, game catalog and focused catalog administration are implemented. Registration creates the account, profile and auditable EUR 100.00 wallet credit atomically. Login, forced first-login password change, protected access and CSRF-protected logout use the shared session helpers. Official Bootstrap 5.3.8 is stored locally, and guests or signed-in users can choose the original Skadi, Dark or Light theme. The storefront provides featured games, search, genre and price filters, five safe sort orders and pagination. Administrators can manage games, genres, covers, screenshots and an ordered maximum of five featured games.
 
 See:
 

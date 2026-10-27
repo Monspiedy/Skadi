@@ -3,12 +3,14 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 05 catalog and game pages is complete. Registration, login, forced first-login
+Phase 06 game media and focused catalog administration is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
 price filters, safe sorting and pagination. Read-only game pages show complete seeded
-facts, rating and price placeholders, original cover placeholders and gallery states.
+facts, rating and price placeholders, uploaded covers and screenshot galleries. Admins
+can manage games, genres, validated image media and an ordered maximum of five featured
+games. User administration, wallet tools and moderation are not part of this phase.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -37,7 +39,10 @@ CURRENT PAGES
 - http://localhost/Skadi/login.php - login-name/email sign-in
 - http://localhost/Skadi/account.php - authenticated account page
 - http://localhost/Skadi/change-password.php - authenticated password change
-- http://localhost/Skadi/admin/ - admin-only guard demonstration
+- http://localhost/Skadi/admin/ - admin-only catalog administration
+- http://localhost/Skadi/admin/games.php - game, cover and screenshot management
+- http://localhost/Skadi/admin/genres.php - genre management
+- http://localhost/Skadi/admin/featured.php - ordered featured-game selection
 - http://localhost/Skadi/health.php - non-sensitive environment health check
 - /errors/403.php, /errors/404.php and /errors/500.php - shared error pages
 
@@ -55,6 +60,16 @@ theme and all navigation/content remain readable; interactive switching is disab
 Bootstrap 5.3.8 CSS and JavaScript are stored in assets/bootstrap/. Its upstream
 MIT license is retained at assets/bootstrap/LICENSE. The application does not load
 presentation assets from a CDN.
+
+GAME MEDIA UPLOADS
+------------------
+Administrators can upload JPG, PNG and WebP covers and screenshots from a saved game's
+edit page. Covers are limited to 5 MB and screenshots to 8 MB. The server validates the
+actual MIME type, extension, readable image dimensions and context-specific dimensions,
+then generates a random storage filename. Replaced and deleted managed files are cleaned
+from uploads/covers or uploads/screenshots. Static assets are never deleted by this path.
+The uploads/.htaccess defense prevents script execution; production hosting should also
+disable executable handlers in the upload directory at the virtual-host level.
 
 The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because

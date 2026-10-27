@@ -74,6 +74,16 @@ Local HTTP deliberately cannot set a `Secure` cookie. The shared session configu
 - Request values are bound through PDO except `ORDER BY`, which can only select from fixed application-owned SQL fragments. Invalid query values reset safely with a visible explanation.
 - Media paths pass a narrow public-path allowlist before becoming image URLs. Phase 05 does not upload files, generate sales, purchase games or create reviews.
 
+## Implemented Phase 06 media and focused catalog administration
+
+- `admin/games.php`, `admin/game-form.php`, `admin/genres.php` and `admin/featured.php` are protected by `requireAdmin()` on every direct request.
+- `includes/admin-catalog.php` owns validated game/genre CRUD, many-to-many genre updates, dependency-aware deletion and transactional featured ordering with an application maximum of five.
+- `includes/uploads.php` provides reusable content-based image validation and generated storage names while keeping cover and screenshot size/dimension policies explicit.
+- Covers use one position-zero `game_media` row; replacement stores the new image before the database transaction and removes only the previous managed upload after commit. Screenshots support multiple validated files with a twelve-image cap and stable sort positions.
+- State-changing handlers live in `actions/admin/`, require POST plus CSRF, and never trust browser MIME values, original paths, client roles or featured positions.
+- `uploads/.htaccess` disables executable handlers as defense in depth. Cleanup accepts only generated paths under `uploads/covers/` and `uploads/screenshots/`, so versioned/static assets cannot be deleted.
+- `assets/js/admin-media.js` adds local image previews, duplicate featured selection feedback and destructive-action confirmation. Server validation remains authoritative when JavaScript is absent or bypassed.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)

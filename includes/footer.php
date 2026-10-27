@@ -19,5 +19,8 @@ declare(strict_types=1);
 </footer>
 <script src="<?= escape(baseUrl('assets/bootstrap/js/bootstrap.bundle.min.js')) ?>"></script>
 <script src="<?= escape(baseUrl('assets/js/theme-selector.js')) ?>"></script>
+<?php foreach (($pageScripts ?? []) as $scriptPath): ?>
+    <script src="<?= escape(baseUrl((string) $scriptPath)) ?>"></script>
+<?php endforeach; ?>
 </body>
 </html>

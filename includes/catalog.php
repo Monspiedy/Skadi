@@ -353,7 +353,7 @@ function safeGameMediaUrl(?string $storagePath): ?string
         return null;
     }
 
-    if (preg_match('#^(assets/images|uploads/games)/[a-zA-Z0-9/_-]+\.(?:jpe?g|png|webp)$#', $storagePath) !== 1) {
+    if (preg_match('#^(assets/images|uploads/(?:covers|screenshots))/[a-zA-Z0-9/_-]+\.(?:jpe?g|png|webp)$#', $storagePath) !== 1) {
         return null;
     }
 
