@@ -148,10 +148,14 @@ function findAuthenticationUserById(PDO $connection, int $userId): array
 {
     $statement = $connection->prepare(
         'SELECT u.id, u.password_hash, u.display_name, u.skadi_id, u.status, '
-        . 'u.must_change_password, r.name AS role '
-        . 'FROM users u INNER JOIN roles r ON r.id = u.role_id WHERE u.id = :id LIMIT 1'
+        . 'u.must_change_password, r.name AS role, COALESCE(up.theme, :default_theme) AS theme '
+        . 'FROM users u INNER JOIN roles r ON r.id = u.role_id '
+        . 'LEFT JOIN user_profiles up ON up.user_id = u.id WHERE u.id = :id LIMIT 1'
     );
-    $statement->execute(['id' => $userId]);
+    $statement->execute([
+        'default_theme' => 'skadi',
+        'id' => $userId,
+    ]);
     $user = $statement->fetch();
 
     if (!is_array($user)) {
@@ -165,13 +169,15 @@ function authenticateUser(PDO $connection, string $identifier, string $password)
 {
     $statement = $connection->prepare(
         'SELECT u.id, u.password_hash, u.display_name, u.skadi_id, u.status, '
-        . 'u.must_change_password, r.name AS role '
+        . 'u.must_change_password, r.name AS role, COALESCE(up.theme, :default_theme) AS theme '
         . 'FROM users u INNER JOIN roles r ON r.id = u.role_id '
+        . 'LEFT JOIN user_profiles up ON up.user_id = u.id '
         . 'WHERE u.login_name = :login_name OR u.email = :email LIMIT 1'
     );
     $statement->execute([
         'login_name' => trim($identifier),
         'email' => mb_strtolower(trim($identifier)),
+        'default_theme' => 'skadi',
     ]);
     $user = $statement->fetch();
     $fallbackHash = '$2y$10$Jq25tCUgQj0x3KrJYONKdeB.7x1NZ3O6ZTvQGXFt2XcfvTn0Gf2o2';

@@ -18,6 +18,8 @@ require_once SKADI_ROOT . '/includes/validation.php';
 require_once SKADI_ROOT . '/config/database.php';
 require_once SKADI_ROOT . '/includes/auth.php';
 require_once SKADI_ROOT . '/includes/auth-service.php';
+require_once SKADI_ROOT . '/includes/theme.php';
+require_once SKADI_ROOT . '/includes/ui-components.php';
 
 initializeErrorHandling($appConfig);
 

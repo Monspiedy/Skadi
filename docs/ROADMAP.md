@@ -16,7 +16,7 @@ The primary date is aggressive. Core course requirements must remain more import
 | 01 | Oct 27 | Importable schema and seed strategy | Complete |
 | 02 | Oct 28 | PHP bootstrap, shared includes and error handling | Complete |
 | 03 | Oct 28-29 | Registration, login, sessions and security helpers | Complete |
-| 04 | Oct 29 | Themes, shared Bootstrap layout and navigation | Not started |
+| 04 | Oct 29 | Themes, shared Bootstrap layout and navigation | Complete |
 | 05 | Oct 30 | Catalog, search, filters, pagination and game pages | Not started |
 | 06 | Oct 31 | Upload pipeline, screenshots and featured games | Not started |
 | 07 | Nov 1 | Cart, wallet, transactional checkout and orders | Not started |

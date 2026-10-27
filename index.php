@@ -11,8 +11,8 @@ require SKADI_ROOT . '/includes/header.php';
     <p class="eyebrow">Store and community</p>
     <h1 id="welcome-heading">Welcome to Skadi</h1>
     <p>
-        Skadi is an educational game store and player community. Create an account to receive
-        an auditable EUR 100.00 demonstration balance, or sign in to continue.
+        Cross the frostline into an original educational game store and player community,
+        designed to remain clear, responsive and fully available during an offline presentation.
     </p>
     <?php if (isAuthenticated()): ?>
         <a class="button-link" href="<?= escape(baseUrl(authenticationDestination())) ?>">Open account</a>
@@ -21,18 +21,18 @@ require SKADI_ROOT . '/includes/header.php';
     <?php endif; ?>
 </section>
 
-<section class="card-grid" aria-label="Account features">
+<section class="card-grid" aria-label="Interface features">
     <article class="card">
-        <h2>Private sign-in</h2>
-        <p>Use your permanent private login name or your email address.</p>
+        <h2>Three clear themes</h2>
+        <p>Choose Skadi, neutral Dark or accessible Light from the navigation on every page.</p>
     </article>
     <article class="card">
-        <h2>Secure passwords</h2>
-        <p>Passwords are hashed and temporary seed credentials must be replaced on first login.</p>
+        <h2>Built for every screen</h2>
+        <p>The shared navigation, content rhythm and footer adapt from wide displays to mobile.</p>
     </article>
     <article class="card">
-        <h2>Demo wallet</h2>
-        <p>New accounts begin with EUR 100.00 and a matching wallet ledger entry.</p>
+        <h2>Offline-ready shell</h2>
+        <p>Bootstrap and Skadi's own visual assets are stored locally for a dependable demo.</p>
     </article>
 </section>
 <?php require SKADI_ROOT . '/includes/footer.php'; ?>

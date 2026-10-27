@@ -33,6 +33,7 @@ function setAuthenticatedUser(array $user): void
         'role' => (string) $user['role'],
         'status' => (string) $user['status'],
         'must_change_password' => (bool) $user['must_change_password'],
+        'theme' => normalizeTheme($user['theme'] ?? 'skadi'),
     ];
     $_SESSION['last_seen_at'] = time();
     $_SESSION['activity_recorded_at'] = time();
@@ -81,10 +82,15 @@ function synchronizeAuthenticatedSession(): void
     }
 
     $statement = db()->prepare(
-        'SELECT u.id, u.display_name, u.skadi_id, u.status, u.must_change_password, r.name AS role '
-        . 'FROM users u INNER JOIN roles r ON r.id = u.role_id WHERE u.id = :id LIMIT 1'
+        'SELECT u.id, u.display_name, u.skadi_id, u.status, u.must_change_password, r.name AS role, '
+        . 'COALESCE(up.theme, :default_theme) AS theme FROM users u '
+        . 'INNER JOIN roles r ON r.id = u.role_id '
+        . 'LEFT JOIN user_profiles up ON up.user_id = u.id WHERE u.id = :id LIMIT 1'
     );
-    $statement->execute(['id' => (int) $sessionUser['id']]);
+    $statement->execute([
+        'default_theme' => 'skadi',
+        'id' => (int) $sessionUser['id'],
+    ]);
     $databaseUser = $statement->fetch();
 
     if (!is_array($databaseUser) || $databaseUser['status'] !== 'active') {
@@ -100,6 +106,7 @@ function synchronizeAuthenticatedSession(): void
         'role' => (string) $databaseUser['role'],
         'status' => (string) $databaseUser['status'],
         'must_change_password' => (bool) $databaseUser['must_change_password'],
+        'theme' => normalizeTheme($databaseUser['theme'] ?? 'skadi'),
     ];
     $_SESSION['last_seen_at'] = $now;
 

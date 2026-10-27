@@ -56,6 +56,16 @@ The foundation remains procedural and intentionally small. Later phases should a
 
 Local HTTP deliberately cannot set a `Secure` cookie. The shared session configuration enables it automatically under HTTPS; production deployment must use HTTPS and production-managed PHP session storage.
 
+## Implemented Phase 04 interface and themes
+
+- The shared header, Bootstrap collapse navigation, page container and footer are rendered through `includes/` on every application page.
+- Official Bootstrap 5.3.8 compiled CSS and bundled JavaScript are stored under `assets/bootstrap/` with the upstream MIT license, so no CDN is required.
+- Theme tokens are isolated in `assets/css/themes.css`; responsive shell and component rules are isolated in `assets/css/layout.css`.
+- `Skadi`, `Dark` and `Light` are applied through `data-theme`, with matching Bootstrap color mode metadata.
+- A small head script restores a guest preference from `localStorage` before styles load. Signed-in users receive their database preference directly in the server-rendered `<html>` element.
+- Signed-in changes use `actions/theme.php`, JSON Fetch, a CSRF header, an allowlist and a prepared `user_profiles` update. The session value changes only after the database operation succeeds.
+- Reusable empty, error and loading state markup lives in `includes/ui-components.php`. Store, community and library links use explicit non-querying placeholders until their approved phases.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)

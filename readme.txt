@@ -3,9 +3,10 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 03 authentication is complete. Registration, login, forced first-login
-password change, protected account/admin access and CSRF-protected logout are
-available. Store pages will be added in later phases.
+Phase 04 layout and themes is complete. Registration, login, forced first-login
+password change, protected account/admin access and CSRF-protected logout remain
+available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
+Dark and Light themes. Store business behavior will be added in later phases.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -26,6 +27,9 @@ DATABASE INSTALLATION
 CURRENT PAGES
 -------------
 - http://localhost/Skadi/ - home page
+- http://localhost/Skadi/store.php - clearly marked catalog placeholder
+- http://localhost/Skadi/community.php - clearly marked community placeholder
+- http://localhost/Skadi/library.php - authenticated library placeholder
 - http://localhost/Skadi/register.php - account registration
 - http://localhost/Skadi/login.php - login-name/email sign-in
 - http://localhost/Skadi/account.php - authenticated account page
@@ -36,6 +40,18 @@ CURRENT PAGES
 
 The home and error pages do not require a database connection. On the health page,
 select the database connectivity test only after creating database.local.php.
+
+THEMES AND OFFLINE ASSETS
+-------------------------
+Use the Theme selector in the main navigation to choose Skadi, Dark or Light.
+Guest preferences remain in that browser's localStorage. Signed-in preferences are
+saved in user_profiles through a CSRF-protected JSON endpoint and are written into
+the next page before CSS loads. With JavaScript disabled, the server-rendered Skadi
+theme and all navigation/content remain readable; interactive switching is disabled.
+
+Bootstrap 5.3.8 CSS and JavaScript are stored in assets/bootstrap/. Its upstream
+MIT license is retained at assets/bootstrap/LICENSE. The application does not load
+presentation assets from a CDN.
 
 The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because
