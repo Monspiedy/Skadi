@@ -24,6 +24,11 @@ if ($game === null) {
     exit;
 }
 
+$currentPrice = loadCurrentPriceRows(db(), [$gameId])[$gameId] ?? [
+    'current_price' => $game['base_price'],
+    'discount_percent' => 0,
+];
+
 $coverUrl = safeGameMediaUrl($game['cover']['storage_path'] ?? null);
 $pageTitle = $game['title'];
 require SKADI_ROOT . '/includes/header.php';
@@ -65,14 +70,23 @@ require SKADI_ROOT . '/includes/header.php';
                 </div>
                 <div>
                     <span>Current price</span>
-                    <strong class="<?= (float) $game['base_price'] === 0.0 ? 'price-free' : '' ?>">
-                        <?= escape(gamePriceLabel($game['base_price'])) ?>
+                    <strong class="<?= moneyToCents($currentPrice['current_price']) === 0 ? 'price-free' : '' ?>">
+                        <?= escape(commercePriceLabel($currentPrice['current_price'])) ?>
                     </strong>
                 </div>
-                <small><?= (float) $game['base_price'] === 0.0
-                    ? 'This game is free to play.'
-                    : 'Sale pricing will be calculated in the weekend sale phase.' ?></small>
+                <small><?= $currentPrice['discount_percent'] > 0
+                    ? escape($currentPrice['discount_percent'] . '% active server discount.')
+                    : (moneyToCents($game['base_price']) === 0 ? 'This game is free to play.' : 'No active discount.') ?></small>
             </div>
+            <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
+                <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
+                    <?= csrfInput() ?>
+                    <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
+                    <button class="btn btn-primary" type="submit">Add to cart</button>
+                </form>
+            <?php else: ?>
+                <a class="btn btn-primary" href="<?= escape(baseUrl('login.php')) ?>">Sign in to purchase</a>
+            <?php endif; ?>
             <dl class="game-facts">
                 <div><dt>Developer</dt><dd><?= escape($game['developer']) ?></dd></div>
                 <div><dt>Publisher</dt><dd><?= escape($game['publisher']) ?></dd></div>

@@ -3,14 +3,15 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 06 game media and focused catalog administration is complete. Registration, login, forced first-login
+Phase 07 cart, wallet and transactional checkout is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
 price filters, safe sorting and pagination. Read-only game pages show complete seeded
 facts, rating and price placeholders, uploaded covers and screenshot galleries. Admins
 can manage games, genres, validated image media and an ordered maximum of five featured
-games. User administration, wallet tools and moderation are not part of this phase.
+games. Authenticated users can keep a database-backed cart, complete demo-money purchases,
+and inspect wallet and order history. Admin wallet adjustment and moderation are not part of this phase.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -38,6 +39,9 @@ CURRENT PAGES
 - http://localhost/Skadi/register.php - account registration
 - http://localhost/Skadi/login.php - login-name/email sign-in
 - http://localhost/Skadi/account.php - authenticated account page
+- http://localhost/Skadi/cart.php - authenticated persistent cart and checkout
+- http://localhost/Skadi/wallet.php - authenticated balance and wallet ledger history
+- http://localhost/Skadi/orders.php - authenticated purchase history and price snapshots
 - http://localhost/Skadi/change-password.php - authenticated password change
 - http://localhost/Skadi/admin/ - admin-only catalog administration
 - http://localhost/Skadi/admin/games.php - game, cover and screenshot management
@@ -70,6 +74,15 @@ then generates a random storage filename. Replaced and deleted managed files are
 from uploads/covers or uploads/screenshots. Static assets are never deleted by this path.
 The uploads/.htaccess defense prevents script execution; production hosting should also
 disable executable handlers in the upload directory at the virtual-host level.
+
+DEMO COMMERCE
+-------------
+Cart mutations and checkout require an authenticated session, POST and a valid CSRF token.
+The browser submits game identifiers only; current prices, active persisted discounts,
+ownership and wallet balance are loaded by the server. Checkout locks the affected rows and
+creates the order, immutable order-item price snapshots, wallet debit, ownership records and
+cart cleanup in one database transaction. Free games create order and ownership history while
+leaving the wallet unchanged. Users cannot top up demo funds.
 
 The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because

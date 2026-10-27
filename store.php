@@ -17,6 +17,22 @@ if ($filters['page'] > $totalPages) {
 
 $featuredGames = loadFeaturedGames($connection);
 $catalogGames = $totalGames > 0 ? loadCatalogGames($connection, $filters, $filters['page']) : [];
+$priceRows = loadCurrentPriceRows(
+    $connection,
+    array_merge(array_column($featuredGames, 'id'), array_column($catalogGames, 'id'))
+);
+foreach ($featuredGames as &$featuredGame) {
+    $featuredGame = array_merge($featuredGame, $priceRows[(int) $featuredGame['id']] ?? [
+        'current_price' => $featuredGame['base_price'], 'discount_percent' => 0,
+    ]);
+}
+unset($featuredGame);
+foreach ($catalogGames as &$catalogGame) {
+    $catalogGame = array_merge($catalogGame, $priceRows[(int) $catalogGame['id']] ?? [
+        'current_price' => $catalogGame['base_price'], 'discount_percent' => 0,
+    ]);
+}
+unset($catalogGame);
 $firstResult = $totalGames === 0 ? 0 : (($filters['page'] - 1) * CATALOG_PAGE_SIZE) + 1;
 $lastResult = min($filters['page'] * CATALOG_PAGE_SIZE, $totalGames);
 
@@ -49,8 +65,8 @@ function renderCatalogCard(array $game, bool $featured = false): void
         <div class="game-card-body">
             <div class="game-card-heading">
                 <h3><a href="<?= escape(baseUrl('game.php?id=' . (int) $game['id'])) ?>"><?= escape($game['title']) ?></a></h3>
-                <strong class="price-tag<?= (float) $game['base_price'] === 0.0 ? ' price-free' : '' ?>">
-                    <?= escape(gamePriceLabel($game['base_price'])) ?>
+                <strong class="price-tag<?= moneyToCents($game['current_price']) === 0 ? ' price-free' : '' ?>">
+                    <?= escape(commercePriceLabel($game['current_price'])) ?>
                 </strong>
             </div>
             <p><?= escape($game['short_description']) ?></p>
@@ -64,6 +80,20 @@ function renderCatalogCard(array $game, bool $featured = false): void
                 </ul>
             <?php endif; ?>
             <p class="game-card-meta"><?= escape(gameRatingLabel($game)) ?></p>
+            <?php if ((int) ($game['discount_percent'] ?? 0) > 0): ?>
+                <p class="game-card-meta"><?= escape((int) $game['discount_percent']) ?>% off
+                    <span class="text-decoration-line-through"><?= escape(commercePriceLabel($game['base_price'])) ?></span>
+                </p>
+            <?php endif; ?>
+            <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
+                <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
+                    <?= csrfInput() ?>
+                    <input type="hidden" name="game_id" value="<?= escape((int) $game['id']) ?>">
+                    <button class="btn btn-sm btn-primary" type="submit">Add to cart</button>
+                </form>
+            <?php else: ?>
+                <a class="btn btn-sm btn-outline-secondary" href="<?= escape(baseUrl('login.php')) ?>">Sign in to purchase</a>
+            <?php endif; ?>
         </div>
     </article>
     <?php

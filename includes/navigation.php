@@ -46,6 +46,11 @@ function navigationClass(bool $isActive): string
                                 href="<?= escape(baseUrl('library.php')) ?>"
                                 <?= $currentScript === 'library.php' ? 'aria-current="page"' : '' ?>>Library</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="<?= navigationClass($currentScript === 'cart.php') ?>"
+                                href="<?= escape(baseUrl('cart.php')) ?>"
+                                <?= $currentScript === 'cart.php' ? 'aria-current="page"' : '' ?>>Cart</a>
+                        </li>
                     <?php endif; ?>
                 </ul>
 
@@ -65,6 +70,10 @@ function navigationClass(bool $isActive): string
                         <a class="nav-link" href="<?= escape(baseUrl('login.php')) ?>">Sign in</a>
                         <a class="btn btn-sm btn-primary" href="<?= escape(baseUrl('register.php')) ?>">Create account</a>
                     <?php else: ?>
+                        <?php if (empty($navigationUser['must_change_password'])): ?>
+                            <a class="nav-link" href="<?= escape(baseUrl('wallet.php')) ?>">Wallet</a>
+                            <a class="nav-link" href="<?= escape(baseUrl('orders.php')) ?>">Orders</a>
+                        <?php endif; ?>
                         <a class="nav-account" href="<?= escape(baseUrl(authenticationDestination())) ?>">
                             <span class="avatar-placeholder" aria-hidden="true"><?= escape(mb_strtoupper(mb_substr($navigationUser['display_name'], 0, 1))) ?></span>
                             <span><?= escape($navigationUser['display_name']) ?></span>

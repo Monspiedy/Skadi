@@ -84,6 +84,15 @@ Local HTTP deliberately cannot set a `Secure` cookie. The shared session configu
 - `uploads/.htaccess` disables executable handlers as defense in depth. Cleanup accepts only generated paths under `uploads/covers/` and `uploads/screenshots/`, so versioned/static assets cannot be deleted.
 - `assets/js/admin-media.js` adds local image previews, duplicate featured selection feedback and destructive-action confirmation. Server validation remains authoritative when JavaScript is absent or bypassed.
 
+## Implemented Phase 07 commerce
+
+- `includes/commerce.php` owns integer-cent money conversion, active-sale price reads, cart persistence, wallet/history queries and transactional checkout.
+- Cart add/remove and checkout mutations live in `actions/`, require authentication, POST and CSRF, and accept identifiers only; prices and balances always come from locked database rows.
+- Checkout locks the user first to serialize repeated submissions, then locks cart, active sale, game, discount and ownership inputs. One transaction creates the completed order and immutable item snapshots, adds ownership, conditionally debits the wallet and ledger for paid orders, and clears the cart.
+- Free acquisitions create normal zero-total orders, order items and library records. They leave the balance unchanged and do not insert a forbidden zero-amount wallet ledger row.
+- `cart.php`, `wallet.php` and `orders.php` expose persistent cart state, current-price change notices, current balance, append-only wallet entries and historical paid-price snapshots.
+- Current pricing is calculated in integer cents. Phase 07 consumes active persisted discount rows; Phase 09 remains responsible for generating and scheduling weekend sales.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)

@@ -22,7 +22,11 @@ require SKADI_ROOT . '/includes/header.php';
             <dd><?= escape(ucfirst($user['role'])) ?></dd>
         </dl>
         <p>Your login name remains private and is not displayed here.</p>
-        <a href="<?= escape(baseUrl('change-password.php')) ?>">Change password</a>
+        <div class="admin-actions">
+            <a href="<?= escape(baseUrl('change-password.php')) ?>">Change password</a>
+            <a href="<?= escape(baseUrl('wallet.php')) ?>">Wallet history</a>
+            <a href="<?= escape(baseUrl('orders.php')) ?>">Order history</a>
+        </div>
     </div>
 </section>
 <?php require SKADI_ROOT . '/includes/footer.php'; ?>
