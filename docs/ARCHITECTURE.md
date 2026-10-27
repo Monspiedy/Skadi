@@ -45,6 +45,17 @@ uploads/               Public validated images
 
 The foundation remains procedural and intentionally small. Later phases should add focused helpers instead of turning `bootstrap.php` into application logic.
 
+## Implemented Phase 03 authentication
+
+- `includes/auth-service.php` owns registration, login, password-change and Skadi ID database operations.
+- Registration validates safe input, hashes the password and creates `users`, `user_profiles` and the EUR 100.00 `wallet_transactions` entry in one database transaction.
+- Session helpers regenerate identifiers after authentication and password changes, enforce a 30-minute inactivity timeout, refresh role/status/password-change state from the database and update `last_activity_at` at a limited interval.
+- `requireGuest()`, `requireAuth()` and `requireAdmin()` provide page-level guards. Seed accounts with temporary credentials are redirected to password change before normal protected access.
+- Form mutations use the shared CSRF helper. Logout is POST-only, and validation state never stores password fields.
+- `account.php` and `admin/index.php` demonstrate authenticated and administrator-only direct-URL protection without implementing later profile or admin CRUD scope.
+
+Local HTTP deliberately cannot set a `Secure` cookie. The shared session configuration enables it automatically under HTTPS; production deployment must use HTTPS and production-managed PHP session storage.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)

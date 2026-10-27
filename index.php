@@ -8,27 +8,31 @@ $pageTitle = 'Home';
 require SKADI_ROOT . '/includes/header.php';
 ?>
 <section class="hero" aria-labelledby="welcome-heading">
-    <p class="eyebrow">PHP foundation ready</p>
+    <p class="eyebrow">Store and community</p>
     <h1 id="welcome-heading">Welcome to Skadi</h1>
     <p>
-        Skadi is an educational game store and player community. The shared PHP foundation is
-        now in place; catalog and account features will arrive in later phases.
+        Skadi is an educational game store and player community. Create an account to receive
+        an auditable EUR 100.00 demonstration balance, or sign in to continue.
     </p>
-    <a class="button-link" href="<?= escape(baseUrl('health.php')) ?>">View system health</a>
+    <?php if (isAuthenticated()): ?>
+        <a class="button-link" href="<?= escape(baseUrl(authenticationDestination())) ?>">Open account</a>
+    <?php else: ?>
+        <a class="button-link" href="<?= escape(baseUrl('register.php')) ?>">Create account</a>
+    <?php endif; ?>
 </section>
 
-<section class="card-grid" aria-label="Foundation features">
+<section class="card-grid" aria-label="Account features">
     <article class="card">
-        <h2>Reusable layout</h2>
-        <p>Pages share one header, navigation, message area and footer.</p>
+        <h2>Private sign-in</h2>
+        <p>Use your permanent private login name or your email address.</p>
     </article>
     <article class="card">
-        <h2>Safe defaults</h2>
-        <p>Sessions, output encoding, CSRF tokens and guarded errors are centralized.</p>
+        <h2>Secure passwords</h2>
+        <p>Passwords are hashed and temporary seed credentials must be replaced on first login.</p>
     </article>
     <article class="card">
-        <h2>Database ready</h2>
-        <p>PDO connects only when a page needs it and keeps local credentials outside Git.</p>
+        <h2>Demo wallet</h2>
+        <p>New accounts begin with EUR 100.00 and a matching wallet ledger entry.</p>
     </article>
 </section>
 <?php require SKADI_ROOT . '/includes/footer.php'; ?>

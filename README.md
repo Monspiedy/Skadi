@@ -6,7 +6,7 @@ The planned application includes a game catalog, demo wallet and cart, purchases
 
 ## Current status
 
-The database foundation and reusable PHP bootstrap are implemented. The project now has shared page includes, centralized sessions, CSRF and validation helpers, lazy PDO configuration, safe error pages and a development health check. Authentication is the next implementation phase.
+The database foundation, reusable PHP bootstrap and authentication phase are implemented. Registration creates the account, profile and auditable EUR 100.00 wallet credit atomically. Login, forced first-login password change, protected access and CSRF-protected logout use the shared session helpers.
 
 See:
 

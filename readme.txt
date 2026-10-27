@@ -3,9 +3,9 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 02 PHP foundation is complete. The site has a reusable shared layout,
-safe error pages and a development health check. Authentication and store pages
-will be added in later phases.
+Phase 03 authentication is complete. Registration, login, forced first-login
+password change, protected account/admin access and CSRF-protected logout are
+available. Store pages will be added in later phases.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -25,7 +25,12 @@ DATABASE INSTALLATION
 
 CURRENT PAGES
 -------------
-- http://localhost/Skadi/ - minimal foundation home page
+- http://localhost/Skadi/ - home page
+- http://localhost/Skadi/register.php - account registration
+- http://localhost/Skadi/login.php - login-name/email sign-in
+- http://localhost/Skadi/account.php - authenticated account page
+- http://localhost/Skadi/change-password.php - authenticated password change
+- http://localhost/Skadi/admin/ - admin-only guard demonstration
 - http://localhost/Skadi/health.php - non-sensitive environment health check
 - /errors/403.php, /errors/404.php and /errors/500.php - shared error pages
 
@@ -36,6 +41,15 @@ The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because
 its existing InnoDB data file was not writable in this environment. No real database
 password is stored in the repository.
+
+SESSION SECURITY
+----------------
+Sessions use cookies only, strict mode, HttpOnly and SameSite=Lax. The cookie is
+scoped to /Skadi/ and becomes Secure automatically when HTTPS is detected. Local
+HTTP development intentionally leaves Secure off so XAMPP can receive the cookie.
+For production, serve only over HTTPS, ensure the Secure flag is present, and use
+production PHP session storage/settings. Authenticated sessions expire after 30
+minutes of inactivity and refresh database role/status information on each request.
 
 DEVELOPMENT DATA
 ----------------

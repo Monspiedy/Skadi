@@ -56,7 +56,23 @@ a {
 
 .nav-links {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 1rem;
+}
+
+.nav-form {
+  margin: 0;
+}
+
+.nav-form button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .site-main {
@@ -100,6 +116,94 @@ section > h1 {
   color: #03111d;
   font-weight: 800;
   text-decoration: none;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.auth-panel {
+  width: min(34rem, 100%);
+}
+
+.auth-form {
+  display: grid;
+  gap: 1rem;
+  margin-block: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #244663;
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.form-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.form-field label,
+.auth-form button {
+  font-weight: 800;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #426681;
+  border-radius: 0.4rem;
+  background: #091827;
+  color: var(--text);
+}
+
+.form-field input:focus {
+  border-color: var(--accent);
+  outline: 2px solid rgb(103 216 255 / 25%);
+}
+
+.form-field small {
+  color: var(--muted);
+}
+
+.field-error {
+  color: var(--error);
+  font-weight: 700;
+}
+
+.form-summary {
+  padding: 0.75rem 1rem;
+  border-left: 0.25rem solid var(--warning);
+  background: var(--surface-light);
+}
+
+.auth-form button {
+  justify-self: start;
+  padding: 0.7rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: #03111d;
+  cursor: pointer;
+}
+
+.account-summary {
+  max-width: 34rem;
+  margin-top: 2rem;
+}
+
+.account-summary dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+}
+
+.account-summary dt {
+  color: var(--muted);
+}
+
+.account-summary dd {
+  margin: 0;
+  font-weight: 700;
 }
 
 .card-grid {
@@ -195,5 +299,9 @@ section > h1 {
 
   .site-nav {
     padding-block: 0.75rem;
+  }
+
+  .nav-links {
+    align-items: flex-start;
   }
 }

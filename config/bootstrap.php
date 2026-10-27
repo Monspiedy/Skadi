@@ -15,8 +15,9 @@ require_once SKADI_ROOT . '/includes/html.php';
 require_once SKADI_ROOT . '/includes/flash.php';
 require_once SKADI_ROOT . '/includes/csrf.php';
 require_once SKADI_ROOT . '/includes/validation.php';
-require_once SKADI_ROOT . '/includes/auth.php';
 require_once SKADI_ROOT . '/config/database.php';
+require_once SKADI_ROOT . '/includes/auth.php';
+require_once SKADI_ROOT . '/includes/auth-service.php';
 
 initializeErrorHandling($appConfig);
 
@@ -33,3 +34,5 @@ if (session_status() === PHP_SESSION_NONE) {
     ]);
     session_start();
 }
+
+synchronizeAuthenticatedSession();
