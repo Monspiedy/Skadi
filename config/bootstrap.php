@@ -20,6 +20,7 @@ require_once SKADI_ROOT . '/includes/auth.php';
 require_once SKADI_ROOT . '/includes/auth-service.php';
 require_once SKADI_ROOT . '/includes/theme.php';
 require_once SKADI_ROOT . '/includes/ui-components.php';
+require_once SKADI_ROOT . '/includes/catalog.php';
 
 initializeErrorHandling($appConfig);
 

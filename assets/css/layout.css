@@ -316,6 +316,384 @@ section > h1 {
   animation: skadi-spin 0.8s linear infinite;
 }
 
+/* Phase 05 catalog and game details. */
+.store-intro {
+  max-width: 50rem;
+  margin-bottom: clamp(3rem, 7vw, 5rem);
+}
+
+.store-intro p:last-child,
+.section-heading > p,
+.game-card p,
+.game-lead,
+.game-side-panel p,
+.game-main-content p {
+  color: var(--sk-muted);
+}
+
+.catalog-section + .catalog-section {
+  margin-top: clamp(4rem, 8vw, 7rem);
+}
+
+.section-heading {
+  display: flex;
+  gap: 1.5rem;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.section-heading h2,
+.section-heading p,
+.game-card h3,
+.game-card p {
+  margin: 0;
+}
+
+.section-heading h2 {
+  color: var(--sk-text);
+  font-size: clamp(1.65rem, 4vw, 2.5rem);
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.game-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  background: var(--sk-surface);
+  box-shadow: 0 0.5rem 1.8rem rgb(0 0 0 / 8%);
+}
+
+.game-card-art {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.game-artwork {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.game-artwork-placeholder {
+  display: grid;
+  position: relative;
+  place-content: center;
+  overflow: hidden;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 75% 20%, var(--sk-hero-glow), transparent 35%),
+    linear-gradient(145deg, var(--sk-bg-deep), var(--sk-surface-soft));
+  color: var(--sk-text);
+  text-align: center;
+}
+
+.game-artwork-placeholder::before {
+  position: absolute;
+  inset: 12% 20%;
+  border: 1px solid var(--sk-border);
+  border-radius: 38% 62% 48% 52%;
+  content: "";
+  transform: rotate(15deg);
+}
+
+.game-artwork-placeholder span,
+.game-artwork-placeholder small {
+  position: relative;
+}
+
+.game-artwork-placeholder span {
+  color: var(--sk-accent-strong);
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.08em;
+}
+
+.game-artwork-placeholder small {
+  max-width: 14rem;
+  font-weight: 800;
+}
+
+.game-card-body {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.15rem;
+}
+
+.game-card-heading {
+  display: flex;
+  gap: 0.75rem;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.game-card h3 {
+  color: var(--sk-text);
+  font-size: 1.1rem;
+}
+
+.game-card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.game-card h3 a:hover {
+  color: var(--sk-accent-strong);
+}
+
+.price-tag {
+  flex: 0 0 auto;
+  color: var(--sk-text);
+}
+
+.price-free {
+  color: var(--sk-success) !important;
+}
+
+.genre-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.genre-list a {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--sk-border);
+  border-radius: 999px;
+  background: var(--sk-surface-soft);
+  color: var(--sk-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.game-card-meta {
+  font-size: 0.85rem;
+}
+
+.game-card-featured .game-card-body {
+  padding: 0.9rem;
+}
+
+.game-card-featured .game-card-heading {
+  display: grid;
+}
+
+.game-card-featured .game-card-body > p:not(.game-card-meta),
+.game-card-featured .genre-list {
+  display: none;
+}
+
+.catalog-filters {
+  display: grid;
+  grid-template-columns: minmax(12rem, 2fr) repeat(3, minmax(9rem, 1fr)) auto;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  background: var(--sk-surface);
+}
+
+.filter-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.filter-field label {
+  color: var(--sk-text);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.filter-field .form-control,
+.filter-field .form-select {
+  border-color: var(--sk-border);
+  background-color: var(--sk-bg-deep);
+  color: var(--sk-text);
+}
+
+[data-theme="light"] .filter-field .form-control,
+[data-theme="light"] .filter-field .form-select {
+  background-color: #fff;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.catalog-notice {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 0.25rem solid var(--sk-warning);
+  background: var(--sk-surface-soft);
+  color: var(--sk-text);
+}
+
+.catalog-notice p {
+  margin: 0;
+}
+
+.catalog-notice p + p {
+  margin-top: 0.35rem;
+}
+
+.catalog-pagination {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.breadcrumb-nav {
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb-item.active {
+  color: var(--sk-muted);
+}
+
+.game-detail-hero {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.8fr) minmax(0, 1.6fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.game-detail-cover .game-artwork {
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 18%);
+}
+
+.game-detail-summary h1 {
+  margin: 0;
+  color: var(--sk-text);
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.game-lead {
+  max-width: 42rem;
+  margin-block: 1.25rem;
+  font-size: 1.15rem;
+}
+
+.price-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  background: var(--sk-surface);
+}
+
+.price-panel div {
+  display: grid;
+}
+
+.price-panel span,
+.price-panel small,
+.game-facts dt {
+  color: var(--sk-muted);
+}
+
+.price-panel strong {
+  color: var(--sk-text);
+  font-size: 1.35rem;
+}
+
+.price-panel small {
+  grid-column: 1 / -1;
+}
+
+.game-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.game-facts dt {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.game-facts dd {
+  margin: 0.2rem 0 0;
+  color: var(--sk-text);
+  font-weight: 700;
+}
+
+.game-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 0.8fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-top: clamp(3rem, 7vw, 6rem);
+}
+
+.game-main-content,
+.game-side-panel {
+  display: grid;
+  gap: 1.5rem;
+  align-content: start;
+}
+
+.game-main-content > section,
+.game-side-panel > section {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  background: var(--sk-surface);
+}
+
+.game-main-content h2,
+.game-side-panel h2 {
+  color: var(--sk-text);
+}
+
+.screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.screenshot-grid img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--sk-border);
+  border-radius: 0.65rem;
+}
+
 @keyframes skadi-spin {
   to { transform: rotate(360deg); }
 }
@@ -376,6 +754,27 @@ section > h1 {
     grid-column: 1 / -1;
     text-align: left;
   }
+
+  .featured-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalog-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter-search,
+  .filter-actions {
+    grid-column: 1 / -1;
+  }
+
+  .game-detail-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 35.99rem) {
@@ -393,6 +792,35 @@ section > h1 {
 
   .footer-meta {
     grid-column: auto;
+  }
+
+  .section-heading,
+  .catalog-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .featured-grid,
+  .catalog-grid,
+  .catalog-filters,
+  .game-detail-hero,
+  .game-facts,
+  .screenshot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-search,
+  .filter-actions {
+    grid-column: auto;
+  }
+
+  .filter-actions .btn {
+    flex: 1;
+  }
+
+  .game-detail-cover {
+    max-width: 20rem;
+    margin-inline: auto;
   }
 }
 

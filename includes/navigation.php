@@ -31,9 +31,9 @@ function navigationClass(bool $isActive): string
                             <?= $currentScript === 'index.php' && $currentDirectory !== 'admin' ? 'aria-current="page"' : '' ?>>Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="<?= navigationClass($currentScript === 'store.php') ?>"
+                        <a class="<?= navigationClass(in_array($currentScript, ['store.php', 'game.php'], true)) ?>"
                             href="<?= escape(baseUrl('store.php')) ?>"
-                            <?= $currentScript === 'store.php' ? 'aria-current="page"' : '' ?>>Store</a>
+                            <?= in_array($currentScript, ['store.php', 'game.php'], true) ? 'aria-current="page"' : '' ?>>Store</a>
                     </li>
                     <li class="nav-item">
                         <a class="<?= navigationClass($currentScript === 'community.php') ?>"

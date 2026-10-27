@@ -17,7 +17,7 @@ The primary date is aggressive. Core course requirements must remain more import
 | 02 | Oct 28 | PHP bootstrap, shared includes and error handling | Complete |
 | 03 | Oct 28-29 | Registration, login, sessions and security helpers | Complete |
 | 04 | Oct 29 | Themes, shared Bootstrap layout and navigation | Complete |
-| 05 | Oct 30 | Catalog, search, filters, pagination and game pages | Not started |
+| 05 | Oct 30 | Catalog, search, filters, pagination and game pages | Complete |
 | 06 | Oct 31 | Upload pipeline, screenshots and featured games | Not started |
 | 07 | Nov 1 | Cart, wallet, transactional checkout and orders | Not started |
 | 08 | Nov 2 | Library, wishlist, reviews and ratings | Not started |

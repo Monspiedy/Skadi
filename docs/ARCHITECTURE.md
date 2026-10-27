@@ -66,6 +66,14 @@ Local HTTP deliberately cannot set a `Secure` cookie. The shared session configu
 - Signed-in changes use `actions/theme.php`, JSON Fetch, a CSRF header, an allowlist and a prepared `user_profiles` update. The session value changes only after the database operation succeeds.
 - Reusable empty, error and loading state markup lives in `includes/ui-components.php`. Store, community and library links use explicit non-querying placeholders until their approved phases.
 
+## Implemented Phase 05 catalog and game pages
+
+- `includes/catalog.php` owns catalog validation, fixed sort mappings, prepared filter queries, review/ownership aggregates, genre loading, pagination helpers and read-only game detail retrieval.
+- `store.php` renders up to five administrator-selected featured games and a six-item paginated catalog with title search, genre and price filters, five sort options and preserved query state.
+- `game.php` accepts only a positive integer ID and renders database-backed facts, genres, base/current-price placeholders, rating summary, original cover fallback, server-rendered gallery state, system requirements and future-module links.
+- Request values are bound through PDO except `ORDER BY`, which can only select from fixed application-owned SQL fragments. Invalid query values reset safely with a visible explanation.
+- Media paths pass a narrow public-path allowlist before becoming image URLs. Phase 05 does not upload files, generate sales, purchase games or create reviews.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)

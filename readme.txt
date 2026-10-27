@@ -3,10 +3,12 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 04 layout and themes is complete. Registration, login, forced first-login
+Phase 05 catalog and game pages is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
-Dark and Light themes. Store business behavior will be added in later phases.
+Dark and Light themes. The store now supports featured games, title search, genre and
+price filters, safe sorting and pagination. Read-only game pages show complete seeded
+facts, rating and price placeholders, original cover placeholders and gallery states.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -27,7 +29,8 @@ DATABASE INSTALLATION
 CURRENT PAGES
 -------------
 - http://localhost/Skadi/ - home page
-- http://localhost/Skadi/store.php - clearly marked catalog placeholder
+- http://localhost/Skadi/store.php - searchable and filterable game catalog
+- http://localhost/Skadi/game.php?id=1 - read-only game detail page
 - http://localhost/Skadi/community.php - clearly marked community placeholder
 - http://localhost/Skadi/library.php - authenticated library placeholder
 - http://localhost/Skadi/register.php - account registration
