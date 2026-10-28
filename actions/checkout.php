@@ -17,7 +17,7 @@ try {
         'Order ' . $result['order_number'] . ' completed for ' . commercePriceLabel($result['total']) . '.'
     );
     redirectTo('orders.php');
-} catch (CommerceException $exception) {
+} catch (CommerceException | WeekendSaleException $exception) {
     addFlashMessage('warning', $exception->getMessage());
     redirectTo('cart.php');
 }

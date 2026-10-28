@@ -3,7 +3,7 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 08 library, wishlist and owned-game reviews is complete. Registration, login, forced first-login
+Phase 09 persisted weekend sales and the storefront countdown are complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
@@ -12,8 +12,9 @@ facts, active rating summaries, owner reviews, uploaded covers and screenshot ga
 can manage games, genres, validated image media and an ordered maximum of five featured
 games. Authenticated users can keep a database-backed cart, complete demo-money purchases,
 and inspect wallet and order history. Users can search and hide library games, permanently remove
-access without a refund, manage a wishlist and publish one 1-10 review per owned game. Admin wallet
-adjustment and review moderation UI are not part of this phase.
+access without a refund, manage a wishlist and publish one 1-10 review per owned game. From Friday
+00:00 through Monday 00:00 in Europe/Helsinki, one persisted shared discount set applies to all users.
+Admin wallet adjustment and review moderation UI are not part of this phase.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -50,6 +51,7 @@ CURRENT PAGES
 - http://localhost/Skadi/admin/games.php - game, cover and screenshot management
 - http://localhost/Skadi/admin/genres.php - genre management
 - http://localhost/Skadi/admin/featured.php - ordered featured-game selection
+- http://localhost/Skadi/admin/weekend-sale.php - sale generation audit and admin-only regeneration
 - http://localhost/Skadi/health.php - non-sensitive environment health check
 - /errors/403.php, /errors/404.php and /errors/500.php - shared error pages
 
@@ -86,6 +88,19 @@ ownership and wallet balance are loaded by the server. Checkout locks the affect
 creates the order, immutable order-item price snapshots, wallet debit, ownership records and
 cart cleanup in one database transaction. Free games create order and ownership history while
 leaving the wallet unchanged. Users cannot top up demo funds.
+
+WEEKEND SALE
+------------
+Sale periods use real Europe/Helsinki calendar boundaries: Friday 00:00 is inclusive and
+Monday 00:00 is exclusive. The first request during a missing period creates one complete
+shared discount set for every paid published game. Discounts are persisted in five-point
+steps from 10 to 75 percent, so refreshes and different users see the same generation.
+
+Catalog, cart, wishlist moves and checkout all use the same server current-price service.
+Free games are excluded, prices outside the window return to base price, and completed
+order-item snapshots never change. The storefront JavaScript countdown uses a server-provided
+timestamp for display only; checkout does not trust it. Administrators can inspect generation
+audit information and regenerate the active sale after acknowledging a warning.
 
 LIBRARY, WISHLIST AND REVIEWS
 -----------------------------

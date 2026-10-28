@@ -196,6 +196,8 @@ function loadWishlist(PDO $connection, int $userId): array
 
 function moveWishlistGameToCart(PDO $connection, int $userId, int $gameId): void
 {
+    $requestNow = saleNow();
+    ensureCurrentWeekendSale($connection, $requestNow);
     $connection->beginTransaction();
     try {
         $user = $connection->prepare('SELECT id FROM users WHERE id = :id AND status = \'active\' FOR UPDATE');
@@ -212,8 +214,7 @@ function moveWishlistGameToCart(PDO $connection, int $userId, int $gameId): void
             throw new LibraryException('That game is not on your wishlist.');
         }
 
-        $saleId = loadActiveSaleId($connection, true);
-        $prices = loadPriceRows($connection, [$gameId], $saleId, true);
+        $prices = loadCurrentPriceRows($connection, [$gameId], $requestNow, true);
         $game = $prices[$gameId] ?? null;
         if ($game === null || $game['status'] !== 'published') {
             throw new LibraryException('That game is not available in the store.');

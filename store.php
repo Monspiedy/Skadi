@@ -35,6 +35,7 @@ foreach ($catalogGames as &$catalogGame) {
 unset($catalogGame);
 $firstResult = $totalGames === 0 ? 0 : (($filters['page'] - 1) * CATALOG_PAGE_SIZE) + 1;
 $lastResult = min($filters['page'] * CATALOG_PAGE_SIZE, $totalGames);
+$saleCountdown = weekendSaleCountdownState();
 
 function renderGameArtwork(array $game, string $className = ''): void
 {
@@ -107,6 +108,7 @@ function renderCatalogCard(array $game, bool $featured = false): void
 }
 
 $pageTitle = 'Store';
+$pageScripts = ['assets/js/sale-countdown.js'];
 require SKADI_ROOT . '/includes/header.php';
 ?>
 <section class="store-intro" aria-labelledby="store-heading">
@@ -114,6 +116,16 @@ require SKADI_ROOT . '/includes/header.php';
     <h1 id="store-heading">Store</h1>
     <p>Explore twelve demonstration games using server-rendered search, filters and sorting.</p>
 </section>
+
+<aside class="sale-banner<?= $saleCountdown['is_active'] ? ' sale-banner-active' : '' ?>"
+    aria-label="Weekend sale timing" data-sale-countdown data-target-time="<?= escape($saleCountdown['target_iso']) ?>"
+    data-sale-active="<?= $saleCountdown['is_active'] ? 'true' : 'false' ?>">
+    <div>
+        <p class="eyebrow"><?= $saleCountdown['is_active'] ? 'Weekend sale is live' : 'Weekend sale' ?></p>
+        <strong data-sale-countdown-label><?= escape($saleCountdown['fallback']) ?></strong>
+    </div>
+    <p>The server decides every price. This countdown is display-only.</p>
+</aside>
 
 <?php if ($featuredGames !== []): ?>
     <section class="catalog-section" aria-labelledby="featured-heading">

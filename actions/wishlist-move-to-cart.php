@@ -19,7 +19,7 @@ try {
     moveWishlistGameToCart(db(), (int) currentUser()['id'], (int) $rawGameId);
     addFlashMessage('success', 'The game was moved from your wishlist to your cart.');
     redirectTo('cart.php');
-} catch (LibraryException $exception) {
+} catch (LibraryException | WeekendSaleException $exception) {
     addFlashMessage('warning', $exception->getMessage());
     redirectTo('wishlist.php');
 }

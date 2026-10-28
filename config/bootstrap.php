@@ -21,6 +21,8 @@ require_once SKADI_ROOT . '/includes/auth-service.php';
 require_once SKADI_ROOT . '/includes/theme.php';
 require_once SKADI_ROOT . '/includes/ui-components.php';
 require_once SKADI_ROOT . '/includes/catalog.php';
+require_once SKADI_ROOT . '/includes/weekend-sale.php';
+require_once SKADI_ROOT . '/includes/pricing.php';
 require_once SKADI_ROOT . '/includes/commerce.php';
 require_once SKADI_ROOT . '/includes/library-service.php';
 require_once SKADI_ROOT . '/includes/uploads.php';

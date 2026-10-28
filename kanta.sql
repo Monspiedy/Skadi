@@ -566,7 +566,7 @@ INSERT INTO `featured_games` (`game_id`,`position`,`featured_by_user_id`) VALUES
     (1,1,1),(2,2,1),(4,3,1),(8,4,1),(11,5,1);
 
 INSERT INTO `weekly_sales` (`id`,`starts_at`,`ends_at`,`generation_number`,`status`,`generated_by_user_id`) VALUES
-    (1,'2026-10-30 00:00:00','2026-11-02 00:00:00',1,'scheduled',1);
+    (1,'2026-10-29 22:00:00','2026-11-01 22:00:00',1,'scheduled',1);
 
 INSERT INTO `weekly_discounts` (`sale_id`,`game_id`,`discount_percent`) VALUES
     (1,3,25),(1,4,15),(1,5,30),(1,6,40),(1,7,20),

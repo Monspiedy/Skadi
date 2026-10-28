@@ -93,6 +93,16 @@ Local HTTP deliberately cannot set a `Secure` cookie. The shared session configu
 - `cart.php`, `wallet.php` and `orders.php` expose persistent cart state, current-price change notices, current balance, append-only wallet entries and historical paid-price snapshots.
 - Current pricing is calculated in integer cents. Phase 07 consumes active persisted discount rows; Phase 09 remains responsible for generating and scheduling weekend sales.
 
+## Implemented Phase 09 weekend sale
+
+- `includes/weekend-sale.php` calculates Friday 00:00 through Monday 00:00 boundaries with timezone-aware `DateTimeImmutable` values in `Europe/Helsinki`, then stores their exact UTC instants.
+- Commerce and wishlist mutations capture one request clock and preflight lazy generation before opening their own transaction. The generator owns and commits its transaction before releasing the period-specific MariaDB advisory lock; it defensively refuses to generate a missing sale inside a caller-owned transaction.
+- The first request inside a missing weekend period creates the sale header and complete paid, published-game discount set atomically. The unique period/generation key remains a database-level backstop.
+- `includes/pricing.php` is the single authoritative current-price service for catalog, cart, wishlist moves and checkout. It applies a persisted discount only when the injected or real server clock is inside the matching Helsinki window.
+- Checkout locks the selected active generation and price inputs, then continues to store immutable base-price, discount and paid-price snapshots in `order_items`.
+- Admin regeneration creates a new audited generation, supersedes the prior generation and never rewrites orders. The administrator UI exposes display names only, not private login names.
+- The storefront renders sale timing before JavaScript runs. `assets/js/sale-countdown.js` enhances that server fallback from a server-provided ISO timestamp; it never supplies or authorizes a price.
+
 ## Implemented Phase 08 library, wishlist and reviews
 
 - `includes/library-service.php` owns user-scoped library queries, visibility changes, transactional access removal, wishlist operations and owner-review lifecycle rules.

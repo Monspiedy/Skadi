@@ -18,7 +18,7 @@ if (!is_string($rawGameId) || !ctype_digit($rawGameId) || (int) $rawGameId < 1) 
 try {
     addGameToCart(db(), (int) currentUser()['id'], (int) $rawGameId);
     addFlashMessage('success', 'The game was added to your cart at the current server price.');
-} catch (CommerceException $exception) {
+} catch (CommerceException | WeekendSaleException $exception) {
     addFlashMessage('warning', $exception->getMessage());
 }
 redirectTo('cart.php');

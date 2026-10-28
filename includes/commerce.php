@@ -6,104 +6,10 @@ final class CommerceException extends RuntimeException
 {
 }
 
-function moneyToCents(string $amount): int
+function addGameToCart(PDO $connection, int $userId, int $gameId, ?DateTimeImmutable $now = null): void
 {
-    if (preg_match('/\A([0-9]+)(?:\.([0-9]{1,2}))?\z/', $amount, $matches) !== 1) {
-        throw new InvalidArgumentException('Invalid decimal money value.');
-    }
-
-    return ((int) $matches[1] * 100) + (int) str_pad($matches[2] ?? '', 2, '0');
-}
-
-function centsToMoney(int $cents): string
-{
-    if ($cents < 0) {
-        throw new InvalidArgumentException('A displayed price cannot be negative.');
-    }
-
-    return intdiv($cents, 100) . '.' . str_pad((string) ($cents % 100), 2, '0', STR_PAD_LEFT);
-}
-
-function commercePriceLabel(string $amount): string
-{
-    return moneyToCents($amount) === 0 ? 'Free' : '€' . centsToMoney(moneyToCents($amount));
-}
-
-function discountedPriceCents(int $basePriceCents, int $discountPercent): int
-{
-    if ($basePriceCents < 0 || $discountPercent < 0 || $discountPercent > 75) {
-        throw new InvalidArgumentException('Invalid price calculation input.');
-    }
-
-    // Adding 50 before integer division gives normal half-up rounding to the nearest cent.
-    return intdiv(($basePriceCents * (100 - $discountPercent)) + 50, 100);
-}
-
-function loadActiveSaleId(PDO $connection, bool $forUpdate = false): ?int
-{
-    $sql = "SELECT id FROM weekly_sales
-            WHERE starts_at <= UTC_TIMESTAMP() AND ends_at > UTC_TIMESTAMP() AND status = 'active'
-            ORDER BY generation_number DESC, id DESC LIMIT 1";
-    if ($forUpdate) {
-        $sql .= ' FOR UPDATE';
-    }
-    $saleId = $connection->query($sql)->fetchColumn();
-
-    return $saleId === false ? null : (int) $saleId;
-}
-
-function loadPriceRows(PDO $connection, array $gameIds, ?int $saleId, bool $forUpdate = false): array
-{
-    $gameIds = array_values(array_unique(array_map('intval', $gameIds)));
-    if ($gameIds === []) {
-        return [];
-    }
-
-    $placeholders = implode(',', array_fill(0, count($gameIds), '?'));
-    $sql = "SELECT id, title, base_price, status FROM games WHERE id IN ($placeholders) ORDER BY id";
-    if ($forUpdate) {
-        $sql .= ' FOR UPDATE';
-    }
-    $statement = $connection->prepare($sql);
-    $statement->execute($gameIds);
-    $rows = [];
-    foreach ($statement->fetchAll() as $game) {
-        $game['discount_percent'] = 0;
-        $rows[(int) $game['id']] = $game;
-    }
-
-    if ($saleId !== null && $rows !== []) {
-        $discountSql = "SELECT game_id, discount_percent FROM weekly_discounts
-                        WHERE sale_id = ? AND game_id IN ($placeholders) ORDER BY game_id";
-        if ($forUpdate) {
-            $discountSql .= ' FOR UPDATE';
-        }
-        $discountStatement = $connection->prepare($discountSql);
-        $discountStatement->execute(array_merge([$saleId], $gameIds));
-        foreach ($discountStatement->fetchAll() as $discount) {
-            $gameId = (int) $discount['game_id'];
-            if (isset($rows[$gameId])) {
-                $rows[$gameId]['discount_percent'] = (int) $discount['discount_percent'];
-            }
-        }
-    }
-
-    foreach ($rows as &$row) {
-        $baseCents = moneyToCents((string) $row['base_price']);
-        $row['current_price'] = centsToMoney(discountedPriceCents($baseCents, (int) $row['discount_percent']));
-    }
-    unset($row);
-
-    return $rows;
-}
-
-function loadCurrentPriceRows(PDO $connection, array $gameIds): array
-{
-    return loadPriceRows($connection, $gameIds, loadActiveSaleId($connection), false);
-}
-
-function addGameToCart(PDO $connection, int $userId, int $gameId): void
-{
+    $requestNow = saleNow($now);
+    ensureCurrentWeekendSale($connection, $requestNow);
     $connection->beginTransaction();
     try {
         $userStatement = $connection->prepare('SELECT id FROM users WHERE id = :id AND status = \'active\' FOR UPDATE');
@@ -112,8 +18,7 @@ function addGameToCart(PDO $connection, int $userId, int $gameId): void
             throw new CommerceException('Your account is not available for purchases.');
         }
 
-        $saleId = loadActiveSaleId($connection, true);
-        $prices = loadPriceRows($connection, [$gameId], $saleId, true);
+        $prices = loadCurrentPriceRows($connection, [$gameId], $requestNow, true);
         $game = $prices[$gameId] ?? null;
         if ($game === null || $game['status'] !== 'published') {
             throw new CommerceException('That game is not available in the store.');
@@ -161,7 +66,7 @@ function removeGameFromCart(PDO $connection, int $userId, int $gameId): bool
     return $statement->rowCount() === 1;
 }
 
-function loadCart(PDO $connection, int $userId): array
+function loadCart(PDO $connection, int $userId, ?DateTimeImmutable $now = null): array
 {
     $statement = $connection->prepare(
         "SELECT ci.game_id, ci.price_when_added, ci.added_at, g.title, g.status,
@@ -173,7 +78,7 @@ function loadCart(PDO $connection, int $userId): array
     );
     $statement->execute(['user_id' => $userId]);
     $items = $statement->fetchAll();
-    $prices = loadCurrentPriceRows($connection, array_column($items, 'game_id'));
+    $prices = loadCurrentPriceRows($connection, array_column($items, 'game_id'), $now);
     $totalCents = 0;
 
     foreach ($items as &$item) {
@@ -204,8 +109,10 @@ function generateOrderNumber(): string
     return 'SKD-' . strtoupper(bin2hex(random_bytes(8)));
 }
 
-function checkoutCart(PDO $connection, int $userId): array
+function checkoutCart(PDO $connection, int $userId, ?DateTimeImmutable $now = null): array
 {
+    $requestNow = saleNow($now);
+    ensureCurrentWeekendSale($connection, $requestNow);
     $connection->beginTransaction();
     try {
         // Lock the wallet owner first so repeated or concurrent submissions serialize consistently.
@@ -228,8 +135,7 @@ function checkoutCart(PDO $connection, int $userId): array
         }
 
         $gameIds = array_map('intval', array_column($cartRows, 'game_id'));
-        $saleId = loadActiveSaleId($connection, true);
-        $prices = loadPriceRows($connection, $gameIds, $saleId, true);
+        $prices = loadCurrentPriceRows($connection, $gameIds, $requestNow, true);
         if (count($prices) !== count($gameIds)) {
             throw new CommerceException('A game in your cart is no longer available.');
         }

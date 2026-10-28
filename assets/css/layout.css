@@ -1214,6 +1214,35 @@ section > h1 {
   color: var(--sk-muted);
 }
 
+.sale-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--sk-border);
+  border-radius: 0.8rem;
+  background: var(--sk-surface);
+}
+
+.sale-banner-active {
+  border-color: var(--sk-accent);
+  box-shadow: 0 0 1.5rem color-mix(in srgb, var(--sk-accent) 18%, transparent);
+}
+
+.sale-banner p {
+  margin-bottom: 0;
+}
+
+.sale-regeneration-panel {
+  max-width: 52rem;
+}
+
+.sale-audit-table td {
+  min-width: 7rem;
+}
+
 @media (max-width: 61.99rem) {
   .admin-card-grid,
   .media-admin-grid,
@@ -1253,7 +1282,8 @@ section > h1 {
   .library-card,
   .library-card-body,
   .wishlist-item,
-  .review-card header {
+  .review-card header,
+  .sale-banner {
     align-items: flex-start;
     flex-direction: column;
   }
