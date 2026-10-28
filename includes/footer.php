@@ -12,6 +12,7 @@ declare(strict_types=1);
         <nav aria-label="Footer navigation">
             <a href="<?= escape(baseUrl('store.php')) ?>">Store</a>
             <a href="<?= escape(baseUrl('community.php')) ?>">Community</a>
+            <a href="<?= escape(baseUrl('guides.php')) ?>">Guides</a>
             <a href="<?= escape(baseUrl('health.php')) ?>">System health</a>
         </nav>
         <p class="footer-meta">&copy; <?= escape(date('Y')) ?> Skadi. Built for offline demonstration.</p>

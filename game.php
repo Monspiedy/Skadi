@@ -232,9 +232,12 @@ require SKADI_ROOT . '/includes/header.php';
             </section>
             <section>
                 <p class="eyebrow">Community</p>
-                <h2>Community Hub</h2>
-                <p>Guides, discussions and screenshots will appear in the game’s hub in later phases.</p>
-                <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('community.php?game=' . (int) $game['id'])) ?>">Community Hub placeholder</a>
+                <h2>Player guides</h2>
+                <p>Read player-written walkthroughs, strategies and builds for this game.</p>
+                <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('guides.php?game=' . (int) $game['id'])) ?>">Browse guides</a>
+                <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
+                    <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('guide-edit.php?game=' . (int) $game['id'])) ?>">Write a guide</a>
+                <?php endif; ?>
             </section>
         </aside>
     </div>

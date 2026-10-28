@@ -7,10 +7,12 @@ config/database.local.php
 # User uploads are local runtime data, not source code
 uploads/avatars/*
 uploads/covers/*
+uploads/guides/*
 uploads/screenshots/*
 storage/chat-attachments/*
 !uploads/avatars/.gitkeep
 !uploads/covers/.gitkeep
+!uploads/guides/.gitkeep
 !uploads/screenshots/.gitkeep
 !storage/chat-attachments/.gitkeep
 !storage/chat-attachments/.htaccess

@@ -29,6 +29,14 @@ function imageUploadPolicy(string $context): array
             'maximum_width' => 2048,
             'maximum_height' => 2048,
         ],
+        'guide_thumbnail' => [
+            'directory' => 'uploads/guides',
+            'maximum_bytes' => 3 * 1024 * 1024,
+            'minimum_width' => 320,
+            'minimum_height' => 180,
+            'maximum_width' => 4000,
+            'maximum_height' => 4000,
+        ],
     ];
 
     if (!isset($policies[$context])) {
@@ -224,6 +232,20 @@ function deleteManagedAvatarUpload(string $storagePath): bool
     }
 
     return unlink($absolutePath);
+}
+
+function isManagedGuideUploadPath(string $storagePath): bool
+{
+    return preg_match('#\Auploads/guides/[a-f0-9]{32}\.(?:jpg|png|webp)\z#', $storagePath) === 1;
+}
+
+function deleteManagedGuideUpload(string $storagePath): bool
+{
+    if (!isManagedGuideUploadPath($storagePath)) {
+        return false;
+    }
+    $absolutePath = SKADI_ROOT . '/' . str_replace('/', DIRECTORY_SEPARATOR, $storagePath);
+    return !is_file($absolutePath) || unlink($absolutePath);
 }
 
 function normalizeMultipleUploads(array $files): array

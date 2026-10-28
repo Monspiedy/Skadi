@@ -210,6 +210,23 @@ The database enforces row-local values, foreign-key integrity, unique relationsh
 - Chat attachments are stored privately and served only after authorization.
 - Admin access is checked per request, not merely hidden in navigation.
 
+## Implemented Phase 12 player guides
+
+- `includes/guide-service.php` owns guide validation, the limited BBCode renderer, list aggregates,
+  author-scoped CRUD and the unique vote/favorite/comment mutations.
+- Public `guides.php` lists only published guides attached to published games, with fixed sort SQL,
+  prepared filters and pagination. `guide.php` exposes drafts only to their author and never exposes
+  hidden or deleted content publicly.
+- Helpful score is `SUM(vote_value)`. Popularity is the count of votes plus favorites plus active
+  comments; the same aggregate definitions are used for display and sorting.
+- The formatter escapes source HTML, allows headings, lists, emphasis, code and only HTTP/HTTPS
+  links. The JavaScript editor preview creates DOM nodes and uses `textContent`; it is a usability
+  aid rather than a security boundary.
+- Guide thumbnails reuse the shared content/MIME/extension/dimension validator with generated names
+  in `uploads/guides/`. Replacement and soft deletion clean up only managed guide upload paths.
+- Vote and favorite uniqueness remains enforced by composite primary keys. Favorite toggles lock the
+  published guide row in a transaction so simultaneous toggles cannot create duplicate state.
+
 ## Maintainability
 
 The project avoids a single global functions file growing without limit. Helpers will be grouped by responsibility, for example authentication, validation, uploads, pricing, pagination and flash messages. Each phase should reuse these modules instead of duplicating logic.

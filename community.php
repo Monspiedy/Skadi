@@ -8,10 +8,13 @@ $pageTitle = 'Community';
 require SKADI_ROOT . '/includes/header.php';
 ?>
 <section aria-labelledby="community-heading">
-    <p class="eyebrow">Module preview</p>
+    <p class="eyebrow">Community</p>
     <h1 id="community-heading">Community</h1>
-    <p>Guides, discussions and community posts arrive in later approved phases.</p>
-    <?php renderStatePanel('empty', 'The camp is quiet', 'Community features are clearly reserved for later phases.'); ?>
-    <p><a class="btn btn-primary" href="<?= escape(baseUrl('people.php')) ?>">Find people on Skadi</a></p>
+    <p>Share game knowledge and connect with other Skadi players.</p>
+    <div class="community-links">
+        <a class="card" href="<?= escape(baseUrl('guides.php')) ?>"><h2>Player guides</h2><p>Read safe, formatted walkthroughs, strategies and builds.</p></a>
+        <a class="card" href="<?= escape(baseUrl('people.php')) ?>"><h2>Find people</h2><p>Search public profiles and manage friendships.</p></a>
+    </div>
+    <p class="form-note">Discussions and broader Community Center features remain reserved for Phase 13.</p>
 </section>
 <?php require SKADI_ROOT . '/includes/footer.php'; ?>

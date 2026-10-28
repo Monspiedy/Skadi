@@ -3,7 +3,7 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 11 direct chat and private attachments is complete. Registration, login, forced first-login
+Phase 12 player guides is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
@@ -17,7 +17,8 @@ access without a refund, manage a wishlist and publish one 1-10 review per owned
 profiles use immutable Skadi IDs; users can search for people, manage friend requests and block accounts while
 one shared privacy rule protects libraries, reviews, activity and friend lists. Accepted unblocked friends can
 exchange direct messages and private validated attachments with asynchronous unread/read updates.
-Admin wallet adjustment and review moderation UI are not part of this phase.
+Any signed-in user can now draft or publish a safe BBCode guide for an active game, vote,
+favorite and comment. Admin moderation UI is not part of this phase.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -40,7 +41,10 @@ CURRENT PAGES
 - http://localhost/Skadi/ - home page
 - http://localhost/Skadi/store.php - searchable and filterable game catalog
 - http://localhost/Skadi/game.php?id=1 - game detail, owner review and active review list
-- http://localhost/Skadi/community.php - clearly marked community placeholder
+- http://localhost/Skadi/community.php - links to implemented guides and people features
+- http://localhost/Skadi/guides.php - paginated global/per-game guide lists and sorts
+- http://localhost/Skadi/guide.php?id=1 - public guide, helpful score, favorites and comments
+- http://localhost/Skadi/guide-edit.php - authenticated draft/publish editor with safe preview
 - http://localhost/Skadi/people.php - public display-name and exact Skadi ID search
 - http://localhost/Skadi/profile.php?id=SKD-DEMO-0001 - public profile with privacy-aware sections
 - http://localhost/Skadi/profile-settings.php - authenticated profile, avatar and privacy settings
