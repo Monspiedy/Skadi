@@ -26,6 +26,8 @@ require SKADI_ROOT . '/includes/header.php';
             <a href="<?= escape(baseUrl('change-password.php')) ?>">Change password</a>
             <a href="<?= escape(baseUrl('wallet.php')) ?>">Wallet history</a>
             <a href="<?= escape(baseUrl('orders.php')) ?>">Order history</a>
+            <a href="<?= escape(baseUrl('library.php')) ?>">Game library</a>
+            <a href="<?= escape(baseUrl('wishlist.php')) ?>">Wishlist</a>
         </div>
     </div>
 </section>

@@ -93,6 +93,15 @@ Local HTTP deliberately cannot set a `Secure` cookie. The shared session configu
 - `cart.php`, `wallet.php` and `orders.php` expose persistent cart state, current-price change notices, current balance, append-only wallet entries and historical paid-price snapshots.
 - Current pricing is calculated in integer cents. Phase 07 consumes active persisted discount rows; Phase 09 remains responsible for generating and scheduling weekend sales.
 
+## Implemented Phase 08 library, wishlist and reviews
+
+- `includes/library-service.php` owns user-scoped library queries, visibility changes, transactional access removal, wishlist operations and owner-review lifecycle rules.
+- `library.php` provides title search and visible/hidden/all filters. Hide, unhide and permanent removal mutations require authenticated POST requests and CSRF; permanent removal also requires explicit server-checked confirmation.
+- Removed ownership stays as one historical `library_items` row. Reacquisition reactivates that row inside checkout, preventing duplicate ownership while linking the latest acquisition item. Orders, order items and wallet entries remain immutable.
+- `wishlist.php` supports remove and transactional move-to-cart. Wishlist adds reject current owners, and checkout removes purchased wishlist rows in the same purchase transaction.
+- Game pages list active reviews, escaped optional text, active-only average/count and author forms. Current owners can create or edit one 1-10 review; authors can soft-delete their review. Moderated hidden/deleted reviews cannot be republished around moderation, and hidden/deleted rows are excluded from public reads and aggregates.
+- Shared layout CSS keeps library, wishlist and review content responsive; a small JavaScript module enhances destructive confirmations while server confirmation remains authoritative.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)

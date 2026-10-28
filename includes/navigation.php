@@ -51,6 +51,11 @@ function navigationClass(bool $isActive): string
                                 href="<?= escape(baseUrl('cart.php')) ?>"
                                 <?= $currentScript === 'cart.php' ? 'aria-current="page"' : '' ?>>Cart</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="<?= navigationClass($currentScript === 'wishlist.php') ?>"
+                                href="<?= escape(baseUrl('wishlist.php')) ?>"
+                                <?= $currentScript === 'wishlist.php' ? 'aria-current="page"' : '' ?>>Wishlist</a>
+                        </li>
                     <?php endif; ?>
                 </ul>
 

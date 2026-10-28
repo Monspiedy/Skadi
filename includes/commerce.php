@@ -120,7 +120,8 @@ function addGameToCart(PDO $connection, int $userId, int $gameId): void
         }
 
         $ownedStatement = $connection->prepare(
-            'SELECT id FROM library_items WHERE user_id = :user_id AND game_id = :game_id FOR UPDATE'
+            'SELECT id FROM library_items
+             WHERE user_id = :user_id AND game_id = :game_id AND removed_at IS NULL FOR UPDATE'
         );
         $ownedStatement->execute(['user_id' => $userId, 'game_id' => $gameId]);
         if ($ownedStatement->fetchColumn() !== false) {
@@ -235,11 +236,16 @@ function checkoutCart(PDO $connection, int $userId): array
 
         $placeholders = implode(',', array_fill(0, count($gameIds), '?'));
         $ownedStatement = $connection->prepare(
-            "SELECT game_id FROM library_items WHERE user_id = ? AND game_id IN ($placeholders) ORDER BY game_id FOR UPDATE"
+            "SELECT game_id, removed_at FROM library_items
+             WHERE user_id = ? AND game_id IN ($placeholders) ORDER BY game_id FOR UPDATE"
         );
         $ownedStatement->execute(array_merge([$userId], $gameIds));
-        if ($ownedStatement->fetchColumn() !== false) {
-            throw new CommerceException('Your cart contains a game that you already own.');
+        $existingLibraryRows = [];
+        foreach ($ownedStatement->fetchAll() as $ownedRow) {
+            if ($ownedRow['removed_at'] === null) {
+                throw new CommerceException('Your cart contains a game that you already own.');
+            }
+            $existingLibraryRows[(int) $ownedRow['game_id']] = true;
         }
 
         $subtotalCents = 0;
@@ -278,6 +284,11 @@ function checkoutCart(PDO $connection, int $userId): array
         $libraryInsert = $connection->prepare(
             'INSERT INTO library_items (user_id, game_id, acquired_order_item_id) VALUES (:user_id, :game_id, :order_item_id)'
         );
+        $libraryReactivate = $connection->prepare(
+            'UPDATE library_items
+             SET acquired_order_item_id = :order_item_id, acquired_at = UTC_TIMESTAMP(), hidden_at = NULL, removed_at = NULL
+             WHERE user_id = :user_id AND game_id = :game_id AND removed_at IS NOT NULL'
+        );
         foreach ($gameIds as $gameId) {
             $game = $prices[$gameId];
             $itemInsert->execute([
@@ -288,12 +299,24 @@ function checkoutCart(PDO $connection, int $userId): array
                 'discount_percent' => $game['discount_percent'],
                 'paid_price' => $game['current_price'],
             ]);
-            $libraryInsert->execute([
-                'user_id' => $userId,
-                'game_id' => $gameId,
+            $libraryParameters = [
+                'user_id' => $userId, 'game_id' => $gameId,
                 'order_item_id' => (int) $connection->lastInsertId(),
-            ]);
+            ];
+            if (isset($existingLibraryRows[$gameId])) {
+                $libraryReactivate->execute($libraryParameters);
+                if ($libraryReactivate->rowCount() !== 1) {
+                    throw new CommerceException('Removed library access could not be restored safely.');
+                }
+            } else {
+                $libraryInsert->execute($libraryParameters);
+            }
         }
+
+        $wishlistCleanup = $connection->prepare(
+            "DELETE FROM wishlist_items WHERE user_id = ? AND game_id IN ($placeholders)"
+        );
+        $wishlistCleanup->execute(array_merge([$userId], $gameIds));
 
         if ($totalCents > 0) {
             $newBalanceCents = $balanceCents - $totalCents;

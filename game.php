@@ -28,9 +28,18 @@ $currentPrice = loadCurrentPriceRows(db(), [$gameId])[$gameId] ?? [
     'current_price' => $game['base_price'],
     'discount_percent' => 0,
 ];
+$reviews = loadGameReviews(db(), $gameId);
+$ownsGame = false;
+$userReview = null;
+if (isAuthenticated() && empty(currentUser()['must_change_password'])) {
+    $currentUserId = (int) currentUser()['id'];
+    $ownsGame = userCurrentlyOwnsGame(db(), $currentUserId, $gameId);
+    $userReview = loadUserReview(db(), $currentUserId, $gameId);
+}
 
 $coverUrl = safeGameMediaUrl($game['cover']['storage_path'] ?? null);
 $pageTitle = $game['title'];
+$pageScripts = ['assets/js/library.js'];
 require SKADI_ROOT . '/includes/header.php';
 ?>
 <nav class="breadcrumb-nav" aria-label="Breadcrumb">
@@ -79,11 +88,18 @@ require SKADI_ROOT . '/includes/header.php';
                     : (moneyToCents($game['base_price']) === 0 ? 'This game is free to play.' : 'No active discount.') ?></small>
             </div>
             <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
-                <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
-                    <?= csrfInput() ?>
-                    <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
-                    <button class="btn btn-primary" type="submit">Add to cart</button>
-                </form>
+                <div class="game-purchase-actions">
+                    <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
+                        <button class="btn btn-primary" type="submit">Add to cart</button>
+                    </form>
+                    <form method="post" action="<?= escape(baseUrl('actions/wishlist-add.php')) ?>">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
+                        <button class="btn btn-outline-secondary" type="submit">Add to wishlist</button>
+                    </form>
+                </div>
             <?php else: ?>
                 <a class="btn btn-primary" href="<?= escape(baseUrl('login.php')) ?>">Sign in to purchase</a>
             <?php endif; ?>
@@ -128,13 +144,91 @@ require SKADI_ROOT . '/includes/header.php';
                 <h2 id="requirements-heading">System requirements</h2>
                 <p><?= nl2br(escape($game['system_requirements'])) ?></p>
             </section>
+
+            <section class="reviews-section" id="reviews" aria-labelledby="reviews-heading">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Owner feedback</p>
+                        <h2 id="reviews-heading">Reviews</h2>
+                    </div>
+                    <strong><?= escape(gameRatingLabel($game)) ?></strong>
+                </div>
+
+                <?php if ($ownsGame && ($userReview === null || $userReview['status'] !== 'hidden')): ?>
+                    <form class="review-form" method="post" action="<?= escape(baseUrl('actions/review-save.php')) ?>">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
+                        <div>
+                            <label for="review-rating">Rating</label>
+                            <select class="form-select" id="review-rating" name="rating" required>
+                                <?php for ($rating = 10; $rating >= 1; $rating--): ?>
+                                    <option value="<?= $rating ?>" <?= (int) ($userReview['rating'] ?? 10) === $rating ? 'selected' : '' ?>>
+                                        <?= $rating ?>/10
+                                    </option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="review-body">Review text <span class="form-note">(optional)</span></label>
+                            <textarea class="form-control" id="review-body" name="body" rows="5" maxlength="4000"><?= escape((string) ($userReview['body'] ?? '')) ?></textarea>
+                        </div>
+                        <div class="review-form-actions">
+                            <button class="btn btn-primary" type="submit">
+                                <?= $userReview !== null && $userReview['status'] === 'active' ? 'Update review' : 'Publish review' ?>
+                            </button>
+                        </div>
+                    </form>
+                <?php elseif ($userReview !== null && $userReview['status'] === 'hidden'): ?>
+                    <p class="catalog-notice">Your review is hidden by moderation and cannot be edited. You may still delete it.</p>
+                <?php elseif (isAuthenticated()): ?>
+                    <p>Only current owners can publish a rating and review.</p>
+                <?php else: ?>
+                    <p><a href="<?= escape(baseUrl('login.php')) ?>">Sign in</a> to review a game you own.</p>
+                <?php endif; ?>
+
+                <?php if ($userReview !== null && in_array($userReview['status'], ['active', 'hidden'], true)): ?>
+                    <form method="post" action="<?= escape(baseUrl('actions/review-delete.php')) ?>"
+                        data-confirm-form="Delete your review and remove it from the game average?">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete my review</button>
+                    </form>
+                <?php endif; ?>
+
+                <?php if ($reviews === []): ?>
+                    <?php renderStatePanel('empty', 'No active reviews yet', 'Current owners can be the first to rate this game.'); ?>
+                <?php else: ?>
+                    <div class="review-list">
+                        <?php foreach ($reviews as $review): ?>
+                            <article class="review-card">
+                                <header>
+                                    <div>
+                                        <h3><?= escape($review['display_name']) ?></h3>
+                                        <span class="badge text-bg-info"><?= escape((int) $review['rating']) ?>/10</span>
+                                    </div>
+                                    <small>
+                                        <?= $review['updated_at'] !== $review['created_at'] ? 'Updated' : 'Published' ?>
+                                        <?= escape(formatUtcDateTime($review['updated_at'])) ?>
+                                    </small>
+                                </header>
+                                <?php if ($review['body'] !== null && trim($review['body']) !== ''): ?>
+                                    <p><?= nl2br(escape($review['body'])) ?></p>
+                                <?php else: ?>
+                                    <p class="form-note">Rating only.</p>
+                                <?php endif; ?>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </section>
         </div>
 
         <aside class="game-side-panel" aria-label="Game community and reviews">
-            <section id="reviews">
+            <section>
                 <p class="eyebrow">Player rating</p>
                 <h2><?= escape(gameRatingLabel($game)) ?></h2>
-                <p>Review reading and writing will become available in Phase 08.</p>
+                <p>Average and count include active reviews only.</p>
+                <a class="btn btn-outline-secondary" href="#reviews-heading">Read reviews</a>
             </section>
             <section>
                 <p class="eyebrow">Community</p>

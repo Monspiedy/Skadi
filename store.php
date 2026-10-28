@@ -86,11 +86,18 @@ function renderCatalogCard(array $game, bool $featured = false): void
                 </p>
             <?php endif; ?>
             <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
-                <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
-                    <?= csrfInput() ?>
-                    <input type="hidden" name="game_id" value="<?= escape((int) $game['id']) ?>">
-                    <button class="btn btn-sm btn-primary" type="submit">Add to cart</button>
-                </form>
+                <div class="game-purchase-actions">
+                    <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="game_id" value="<?= escape((int) $game['id']) ?>">
+                        <button class="btn btn-sm btn-primary" type="submit">Add to cart</button>
+                    </form>
+                    <form method="post" action="<?= escape(baseUrl('actions/wishlist-add.php')) ?>">
+                        <?= csrfInput() ?>
+                        <input type="hidden" name="game_id" value="<?= escape((int) $game['id']) ?>">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">Wishlist</button>
+                    </form>
+                </div>
             <?php else: ?>
                 <a class="btn btn-sm btn-outline-secondary" href="<?= escape(baseUrl('login.php')) ?>">Sign in to purchase</a>
             <?php endif; ?>

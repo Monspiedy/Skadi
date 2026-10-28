@@ -3,15 +3,17 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 07 cart, wallet and transactional checkout is complete. Registration, login, forced first-login
+Phase 08 library, wishlist and owned-game reviews is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
 price filters, safe sorting and pagination. Read-only game pages show complete seeded
-facts, rating and price placeholders, uploaded covers and screenshot galleries. Admins
+facts, active rating summaries, owner reviews, uploaded covers and screenshot galleries. Admins
 can manage games, genres, validated image media and an ordered maximum of five featured
 games. Authenticated users can keep a database-backed cart, complete demo-money purchases,
-and inspect wallet and order history. Admin wallet adjustment and moderation are not part of this phase.
+and inspect wallet and order history. Users can search and hide library games, permanently remove
+access without a refund, manage a wishlist and publish one 1-10 review per owned game. Admin wallet
+adjustment and review moderation UI are not part of this phase.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -33,9 +35,10 @@ CURRENT PAGES
 -------------
 - http://localhost/Skadi/ - home page
 - http://localhost/Skadi/store.php - searchable and filterable game catalog
-- http://localhost/Skadi/game.php?id=1 - read-only game detail page
+- http://localhost/Skadi/game.php?id=1 - game detail, owner review and active review list
 - http://localhost/Skadi/community.php - clearly marked community placeholder
-- http://localhost/Skadi/library.php - authenticated library placeholder
+- http://localhost/Skadi/library.php - searchable authenticated library and access controls
+- http://localhost/Skadi/wishlist.php - authenticated wishlist and move-to-cart controls
 - http://localhost/Skadi/register.php - account registration
 - http://localhost/Skadi/login.php - login-name/email sign-in
 - http://localhost/Skadi/account.php - authenticated account page
@@ -83,6 +86,19 @@ ownership and wallet balance are loaded by the server. Checkout locks the affect
 creates the order, immutable order-item price snapshots, wallet debit, ownership records and
 cart cleanup in one database transaction. Free games create order and ownership history while
 leaving the wallet unchanged. Users cannot top up demo funds.
+
+LIBRARY, WISHLIST AND REVIEWS
+-----------------------------
+Library searches and visibility filters are scoped to the signed-in user. Hide, unhide and
+permanent removal require POST plus CSRF. Permanent removal also requires explicit confirmation,
+does not refund demo money and does not delete order or wallet history. Reacquiring a removed game
+reactivates its unique library row instead of creating duplicate ownership.
+
+Wishlist mutations are authenticated and CSRF-protected. Owned games cannot be wishlisted. Moving
+a wishlist item to the cart is transactional, and a completed purchase removes matching wishlist
+rows in the checkout transaction. Only current owners may create or edit one rating from 1 to 10
+per game. Review text is escaped. Deleted and moderation-hidden reviews do not appear publicly and
+do not affect the displayed average or review count.
 
 The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because
