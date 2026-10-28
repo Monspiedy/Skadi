@@ -22,7 +22,7 @@ The primary date is aggressive. Core course requirements must remain more import
 | 07 | Nov 1 | Cart, wallet, transactional checkout and orders | Complete |
 | 08 | Nov 2 | Library, wishlist, reviews and ratings | Complete |
 | 09 | Nov 3 | Weekend discounts and countdown | Complete |
-| 10 | Nov 4 | Profiles, privacy, Skadi ID, friends and blocking | Not started |
+| 10 | Nov 4 | Profiles, privacy, Skadi ID, friends and blocking | Complete |
 | 11 | Nov 5-6 | Direct chat, edit/delete, unread state and attachments | Not started |
 | 12 | Nov 7 | Player guides, voting, favorites and comments | Not started |
 | 13 | Nov 8 | Community Center, discussions and community posts | Not started |

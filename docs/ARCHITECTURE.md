@@ -112,6 +112,15 @@ Local HTTP deliberately cannot set a `Secure` cookie. The shared session configu
 - Game pages list active reviews, escaped optional text, active-only average/count and author forms. Current owners can create or edit one 1-10 review; authors can soft-delete their review. Moderated hidden/deleted reviews cannot be republished around moderation, and hidden/deleted rows are excluded from public reads and aggregates.
 - Shared layout CSS keeps library, wishlist and review content responsive; a small JavaScript module enhances destructive confirmations while server confirmation remains authoritative.
 
+## Implemented Phase 10 profiles, privacy and friends
+
+- `includes/social-service.php` owns profile validation, public discovery, presence, centralized privacy decisions and all transactional friendship/block transitions.
+- Public profiles use immutable Skadi IDs. Search matches partial display names or an exact Skadi ID and never selects private login names or email addresses.
+- One `profilePrivacyAccess()` decision is reused for library, active reviews, derived activity and friend-list visibility. Blocking overrides that decision and social contact.
+- Every friendship/block mutation locks both users in canonical ID order before locking the pair row. This serializes reverse requests and makes the 100-accepted-friend count safe to enforce during acceptance.
+- Profile settings update public identity/preferences and private email together. Avatar files reuse content-based JPG/PNG/WebP validation, generated names and post-commit cleanup under `uploads/avatars/`.
+- Presence comes from the existing throttled `last_activity_at` updates and is shown as online, recently online or offline only when the user permits it.
+
 ## Database conventions
 
 - InnoDB tables and UTF-8 (`utf8mb4`)

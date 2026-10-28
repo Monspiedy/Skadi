@@ -1243,6 +1243,117 @@ section > h1 {
   min-width: 7rem;
 }
 
+/* Phase 10 profiles, privacy and friendships. */
+.social-page,
+.social-page > section,
+.social-form,
+.people-grid,
+.profile-section-grid,
+.profile-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.social-form,
+.people-search,
+.profile-panel,
+.person-card,
+.profile-hero {
+  padding: 1.15rem;
+  border: 1px solid var(--sk-border);
+  border-radius: 0.85rem;
+  background: var(--sk-surface);
+}
+
+.social-settings-grid,
+.profile-section-grid,
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.people-search > div,
+.profile-hero,
+.person-card,
+.person-card-body,
+.social-actions,
+.avatar-setting {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.people-search input {
+  flex: 1;
+}
+
+.person-card-body {
+  min-width: 0;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.person-card h2,
+.person-card h3,
+.person-card p,
+.profile-hero p {
+  margin-bottom: 0;
+}
+
+.profile-avatar {
+  width: 4.5rem;
+  height: 4.5rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-avatar-large {
+  width: 8rem;
+  height: 8rem;
+  font-size: 3rem;
+}
+
+.profile-avatar-placeholder {
+  display: inline-grid;
+  place-items: center;
+  color: var(--sk-text);
+  background: var(--sk-surface-raised);
+  font-weight: 800;
+}
+
+.profile-hero > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.subtle-skadi-id,
+.person-card small {
+  color: var(--sk-muted);
+  font-size: 0.8rem;
+}
+
+.presence {
+  display: inline-block;
+  margin-top: 0.35rem;
+  color: var(--sk-muted);
+  font-size: 0.85rem;
+}
+
+.presence-online {
+  color: var(--bs-success-text-emphasis);
+}
+
+.profile-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.privacy-notice {
+  border-style: dashed;
+}
+
 @media (max-width: 61.99rem) {
   .admin-card-grid,
   .media-admin-grid,
@@ -1255,6 +1366,12 @@ section > h1 {
   }
 
   .library-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .social-settings-grid,
+  .profile-section-grid,
+  .people-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1302,6 +1419,16 @@ section > h1 {
   .wishlist-actions {
     align-items: flex-start;
     justify-items: start;
+  }
+
+  .profile-hero,
+  .person-card,
+  .person-card-body,
+  .social-actions,
+  .avatar-setting,
+  .people-search > div {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 

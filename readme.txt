@@ -3,7 +3,7 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 09 persisted weekend sales and the storefront countdown are complete. Registration, login, forced first-login
+Phase 10 profiles, privacy, presence and friendships are complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
@@ -13,7 +13,9 @@ can manage games, genres, validated image media and an ordered maximum of five f
 games. Authenticated users can keep a database-backed cart, complete demo-money purchases,
 and inspect wallet and order history. Users can search and hide library games, permanently remove
 access without a refund, manage a wishlist and publish one 1-10 review per owned game. From Friday
-00:00 through Monday 00:00 in Europe/Helsinki, one persisted shared discount set applies to all users.
+00:00 through Monday 00:00 in Europe/Helsinki, one persisted shared discount set applies to all users. Public
+profiles use immutable Skadi IDs; users can search for people, manage friend requests and block accounts while
+one shared privacy rule protects libraries, reviews, activity and friend lists.
 Admin wallet adjustment and review moderation UI are not part of this phase.
 
 PLANNED ENVIRONMENT
@@ -38,6 +40,10 @@ CURRENT PAGES
 - http://localhost/Skadi/store.php - searchable and filterable game catalog
 - http://localhost/Skadi/game.php?id=1 - game detail, owner review and active review list
 - http://localhost/Skadi/community.php - clearly marked community placeholder
+- http://localhost/Skadi/people.php - public display-name and exact Skadi ID search
+- http://localhost/Skadi/profile.php?id=SKD-DEMO-0001 - public profile with privacy-aware sections
+- http://localhost/Skadi/profile-settings.php - authenticated profile, avatar and privacy settings
+- http://localhost/Skadi/friends.php - authenticated friends, requests and created blocks
 - http://localhost/Skadi/library.php - searchable authenticated library and access controls
 - http://localhost/Skadi/wishlist.php - authenticated wishlist and move-to-cart controls
 - http://localhost/Skadi/register.php - account registration
@@ -114,6 +120,19 @@ a wishlist item to the cart is transactional, and a completed purchase removes m
 rows in the checkout transaction. Only current owners may create or edit one rating from 1 to 10
 per game. Review text is escaped. Deleted and moderation-hidden reviews do not appear publicly and
 do not affect the displayed average or review count.
+
+PROFILES, PRIVACY AND FRIENDS
+-----------------------------
+Display names are changeable and may be duplicated. Login names remain private and immutable; the public,
+immutable Skadi ID is used for profile routes and exact-ID searches. Profile settings also cover unique email,
+biography, Skadi/Dark/Light theme, incoming-request preference, presence visibility and public/friends-only/private
+detail visibility. Avatar uploads accept content-verified JPG, PNG or WebP images up to 2 MB and use generated names.
+
+The same privacy decision protects library, active reviews, recent activity and accepted friends. Display name,
+avatar and subtle Skadi ID remain discoverable. Presence is based on recent authenticated activity and disappears
+when hidden. Friend requests can be sent, cancelled, accepted or declined; either friend can remove the relationship.
+Acceptance enforces a maximum of 100 friends on the server. Blocking removes friendship, prevents new requests and
+private-detail access, and remains active until the blocker removes it. Direct chat is intentionally Phase 11 scope.
 
 The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because

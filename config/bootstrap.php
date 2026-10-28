@@ -26,6 +26,7 @@ require_once SKADI_ROOT . '/includes/pricing.php';
 require_once SKADI_ROOT . '/includes/commerce.php';
 require_once SKADI_ROOT . '/includes/library-service.php';
 require_once SKADI_ROOT . '/includes/uploads.php';
+require_once SKADI_ROOT . '/includes/social-service.php';
 require_once SKADI_ROOT . '/includes/admin-catalog.php';
 
 initializeErrorHandling($appConfig);

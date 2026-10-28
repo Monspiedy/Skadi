@@ -21,6 +21,14 @@ function imageUploadPolicy(string $context): array
             'maximum_width' => 7680,
             'maximum_height' => 4320,
         ],
+        'avatar' => [
+            'directory' => 'uploads/avatars',
+            'maximum_bytes' => 2 * 1024 * 1024,
+            'minimum_width' => 64,
+            'minimum_height' => 64,
+            'maximum_width' => 2048,
+            'maximum_height' => 2048,
+        ],
     ];
 
     if (!isset($policies[$context])) {
@@ -185,6 +193,28 @@ function isManagedGameUploadPath(string $storagePath): bool
 function deleteManagedGameUpload(string $storagePath): bool
 {
     if (!isManagedGameUploadPath($storagePath)) {
+        return false;
+    }
+
+    $absolutePath = SKADI_ROOT . '/' . str_replace('/', DIRECTORY_SEPARATOR, $storagePath);
+    if (!is_file($absolutePath)) {
+        return true;
+    }
+
+    return unlink($absolutePath);
+}
+
+function isManagedAvatarUploadPath(string $storagePath): bool
+{
+    return preg_match(
+        '#\Auploads/avatars/[a-f0-9]{32}\.(?:jpg|png|webp)\z#',
+        $storagePath
+    ) === 1;
+}
+
+function deleteManagedAvatarUpload(string $storagePath): bool
+{
+    if (!isManagedAvatarUploadPath($storagePath)) {
         return false;
     }
 

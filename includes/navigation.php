@@ -36,9 +36,9 @@ function navigationClass(bool $isActive): string
                             <?= in_array($currentScript, ['store.php', 'game.php'], true) ? 'aria-current="page"' : '' ?>>Store</a>
                     </li>
                     <li class="nav-item">
-                        <a class="<?= navigationClass($currentScript === 'community.php') ?>"
+                        <a class="<?= navigationClass(in_array($currentScript, ['community.php', 'people.php', 'profile.php', 'friends.php'], true)) ?>"
                             href="<?= escape(baseUrl('community.php')) ?>"
-                            <?= $currentScript === 'community.php' ? 'aria-current="page"' : '' ?>>Community</a>
+                            <?= in_array($currentScript, ['community.php', 'people.php', 'profile.php', 'friends.php'], true) ? 'aria-current="page"' : '' ?>>Community</a>
                     </li>
                     <?php if ($navigationUser !== null && empty($navigationUser['must_change_password'])): ?>
                         <li class="nav-item">
@@ -55,6 +55,11 @@ function navigationClass(bool $isActive): string
                             <a class="<?= navigationClass($currentScript === 'wishlist.php') ?>"
                                 href="<?= escape(baseUrl('wishlist.php')) ?>"
                                 <?= $currentScript === 'wishlist.php' ? 'aria-current="page"' : '' ?>>Wishlist</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="<?= navigationClass($currentScript === 'friends.php') ?>"
+                                href="<?= escape(baseUrl('friends.php')) ?>"
+                                <?= $currentScript === 'friends.php' ? 'aria-current="page"' : '' ?>>Friends</a>
                         </li>
                     <?php endif; ?>
                 </ul>

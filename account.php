@@ -23,6 +23,9 @@ require SKADI_ROOT . '/includes/header.php';
         </dl>
         <p>Your login name remains private and is not displayed here.</p>
         <div class="admin-actions">
+            <a href="<?= escape(baseUrl('profile.php?id=' . rawurlencode($user['skadi_id']))) ?>">Public profile</a>
+            <a href="<?= escape(baseUrl('profile-settings.php')) ?>">Profile settings</a>
+            <a href="<?= escape(baseUrl('friends.php')) ?>">Friends and requests</a>
             <a href="<?= escape(baseUrl('change-password.php')) ?>">Change password</a>
             <a href="<?= escape(baseUrl('wallet.php')) ?>">Wallet history</a>
             <a href="<?= escape(baseUrl('orders.php')) ?>">Order history</a>
