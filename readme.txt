@@ -3,7 +3,7 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 10 profiles, privacy, presence and friendships are complete. Registration, login, forced first-login
+Phase 11 direct chat and private attachments is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
@@ -15,7 +15,8 @@ and inspect wallet and order history. Users can search and hide library games, p
 access without a refund, manage a wishlist and publish one 1-10 review per owned game. From Friday
 00:00 through Monday 00:00 in Europe/Helsinki, one persisted shared discount set applies to all users. Public
 profiles use immutable Skadi IDs; users can search for people, manage friend requests and block accounts while
-one shared privacy rule protects libraries, reviews, activity and friend lists.
+one shared privacy rule protects libraries, reviews, activity and friend lists. Accepted unblocked friends can
+exchange direct messages and private validated attachments with asynchronous unread/read updates.
 Admin wallet adjustment and review moderation UI are not part of this phase.
 
 PLANNED ENVIRONMENT
@@ -44,6 +45,7 @@ CURRENT PAGES
 - http://localhost/Skadi/profile.php?id=SKD-DEMO-0001 - public profile with privacy-aware sections
 - http://localhost/Skadi/profile-settings.php - authenticated profile, avatar and privacy settings
 - http://localhost/Skadi/friends.php - authenticated friends, requests and created blocks
+- http://localhost/Skadi/chat.php - authenticated direct chat for current unblocked friends
 - http://localhost/Skadi/library.php - searchable authenticated library and access controls
 - http://localhost/Skadi/wishlist.php - authenticated wishlist and move-to-cart controls
 - http://localhost/Skadi/register.php - account registration
@@ -132,7 +134,24 @@ The same privacy decision protects library, active reviews, recent activity and 
 avatar and subtle Skadi ID remain discoverable. Presence is based on recent authenticated activity and disappears
 when hidden. Friend requests can be sent, cancelled, accepted or declined; either friend can remove the relationship.
 Acceptance enforces a maximum of 100 friends on the server. Blocking removes friendship, prevents new requests and
-private-detail access, and remains active until the blocker removes it. Direct chat is intentionally Phase 11 scope.
+private-detail access, and remains active until the blocker removes it. Direct chat reuses these same relationship rules.
+
+DIRECT CHAT AND ATTACHMENTS
+---------------------------
+The Chat page lists current unblocked friends, unread totals and the most recent visible message. Selecting a friend
+loads up to the latest 100 visible messages and marks incoming messages read. Fetch polling refreshes the ordered
+server result about every three seconds; the client deduplicates by message ID before rendering.
+
+Messages are limited to 2,000 readable characters and sending is limited to one message every two seconds to avoid
+accidental flooding. Text is rendered with DOM text nodes. Authors can edit their own text, and edited messages show
+an `edited` label. Hiding affects only the current participant. Delete for everyone hard-deletes the message, both
+participants' state and its attachment even when the other participant already hid it; no tombstone is displayed.
+
+Each message may have one JPG, PNG, WebP, PDF or TXT attachment up to 5 MB. The server checks upload status, actual
+MIME type, extension and readable image content, then stores the file under a generated name in the denied private
+storage directory. Only the authenticated current conversation participants can use the download endpoint, and
+storage names or paths are never returned. Blocking or removing the friendship immediately disables chat actions
+and downloads. Administrators have no private-message reader.
 
 The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because

@@ -31,6 +31,7 @@ function socialDashboardCard(array $person, string $section): void
                 <?php elseif ($section === 'outgoing'): ?>
                     <button class="btn btn-sm btn-outline-secondary" name="social_action" value="cancel" type="submit">Cancel request</button>
                 <?php elseif ($section === 'accepted'): ?>
+                    <a class="btn btn-sm btn-primary" href="<?= escape(baseUrl('chat.php?user_id=' . (int) $person['id'])) ?>">Chat</a>
                     <button class="btn btn-sm btn-outline-danger" name="social_action" value="remove" type="submit">Remove friend</button>
                 <?php else: ?>
                     <button class="btn btn-sm btn-outline-secondary" name="social_action" value="unblock" type="submit">Unblock</button>

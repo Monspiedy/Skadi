@@ -13,6 +13,7 @@ storage/chat-attachments/*
 !uploads/covers/.gitkeep
 !uploads/screenshots/.gitkeep
 !storage/chat-attachments/.gitkeep
+!storage/chat-attachments/.htaccess
 
 # Logs, caches and temporary files
 storage/logs/*
