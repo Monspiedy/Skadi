@@ -97,6 +97,9 @@ body {
   display: flex;
   gap: 0.45rem;
   align-items: center;
+  margin-left: auto;
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--sk-border);
 }
 
 .theme-control label {
@@ -122,6 +125,21 @@ body {
   color: var(--sk-text);
   font-weight: 700;
   text-decoration: none;
+}
+
+.nav-summary-link {
+  display: grid;
+  gap: 0.05rem;
+  line-height: 1.05;
+}
+
+.nav-summary-value {
+  color: var(--sk-accent-strong);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .avatar-placeholder {
@@ -739,6 +757,17 @@ section > h1 {
   .nav-utilities {
     align-items: flex-start;
     flex-direction: column;
+    width: 100%;
+  }
+
+  .theme-control {
+    width: 100%;
+    margin-top: 0.25rem;
+    margin-left: 0;
+    padding-top: 0.75rem;
+    padding-left: 0;
+    border-top: 1px solid var(--sk-border);
+    border-left: 0;
   }
 
   .hero::after {

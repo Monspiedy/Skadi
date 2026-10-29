@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 $navigationUser = currentUser();
+$navigationCartCount = (int) ($navigationUser['cart_game_count'] ?? 0);
 $currentScript = basename((string) ($_SERVER['SCRIPT_NAME'] ?? 'index.php'));
-$currentDirectory = basename(dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/')));
 
 function navigationClass(bool $isActive): string
 {
@@ -26,14 +26,14 @@ function navigationClass(bool $isActive): string
             <div class="collapse navbar-collapse" id="primary-navigation">
                 <ul class="navbar-nav me-auto mb-3 mb-lg-0">
                     <li class="nav-item">
-                        <a class="<?= navigationClass($currentScript === 'index.php' && $currentDirectory !== 'admin') ?>"
-                            href="<?= escape(baseUrl()) ?>"
-                            <?= $currentScript === 'index.php' && $currentDirectory !== 'admin' ? 'aria-current="page"' : '' ?>>Home</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="<?= navigationClass(in_array($currentScript, ['store.php', 'game.php'], true)) ?>"
                             href="<?= escape(baseUrl('store.php')) ?>"
                             <?= in_array($currentScript, ['store.php', 'game.php'], true) ? 'aria-current="page"' : '' ?>>Store</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="<?= navigationClass($currentScript === 'library.php') ?>"
+                            href="<?= escape(baseUrl('library.php')) ?>"
+                            <?= $currentScript === 'library.php' ? 'aria-current="page"' : '' ?>>Library</a>
                     </li>
                     <li class="nav-item">
                         <a class="<?= navigationClass(in_array($currentScript, ['community.php', 'game-community.php', 'discussions.php', 'discussion.php', 'topic-edit.php', 'posts.php', 'community-post.php', 'post-edit.php', 'guides.php', 'guide.php', 'guide-edit.php', 'people.php', 'profile.php', 'friends.php', 'chat.php'], true)) ?>"
@@ -42,14 +42,14 @@ function navigationClass(bool $isActive): string
                     </li>
                     <?php if ($navigationUser !== null && empty($navigationUser['must_change_password'])): ?>
                         <li class="nav-item">
-                            <a class="<?= navigationClass($currentScript === 'library.php') ?>"
-                                href="<?= escape(baseUrl('library.php')) ?>"
-                                <?= $currentScript === 'library.php' ? 'aria-current="page"' : '' ?>>Library</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="<?= navigationClass($currentScript === 'cart.php') ?>"
+                            <a class="<?= navigationClass($currentScript === 'cart.php') ?> nav-summary-link"
                                 href="<?= escape(baseUrl('cart.php')) ?>"
-                                <?= $currentScript === 'cart.php' ? 'aria-current="page"' : '' ?>>Cart</a>
+                                <?= $currentScript === 'cart.php' ? 'aria-current="page"' : '' ?>>
+                                <span>Cart</span>
+                                <span class="nav-summary-value nav-cart-count">
+                                    <?= escape($navigationCartCount . ' ' . ($navigationCartCount === 1 ? 'game' : 'games')) ?>
+                                </span>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="<?= navigationClass($currentScript === 'wishlist.php') ?>"
@@ -70,23 +70,17 @@ function navigationClass(bool $isActive): string
                 </ul>
 
                 <div class="nav-utilities">
-                    <div class="theme-control">
-                        <label for="theme-selector">Theme</label>
-                        <select id="theme-selector" class="form-select form-select-sm" data-theme-selector
-                            data-save-url="<?= escape(baseUrl('actions/theme.php')) ?>">
-                            <option value="skadi" <?= $activeTheme === 'skadi' ? 'selected' : '' ?>>Skadi</option>
-                            <option value="dark" <?= $activeTheme === 'dark' ? 'selected' : '' ?>>Dark</option>
-                            <option value="light" <?= $activeTheme === 'light' ? 'selected' : '' ?>>Light</option>
-                        </select>
-                        <span class="visually-hidden" data-theme-status aria-live="polite"></span>
-                    </div>
-
                     <?php if ($navigationUser === null): ?>
                         <a class="nav-link" href="<?= escape(baseUrl('login.php')) ?>">Sign in</a>
                         <a class="btn btn-sm btn-primary" href="<?= escape(baseUrl('register.php')) ?>">Create account</a>
                     <?php else: ?>
                         <?php if (empty($navigationUser['must_change_password'])): ?>
-                            <a class="nav-link" href="<?= escape(baseUrl('wallet.php')) ?>">Wallet</a>
+                            <a class="nav-link nav-summary-link" href="<?= escape(baseUrl('wallet.php')) ?>">
+                                <span>Wallet</span>
+                                <span class="nav-summary-value nav-wallet-balance">
+                                    <?= escape('€' . centsToMoney(moneyToCents($navigationUser['wallet_balance']))) ?>
+                                </span>
+                            </a>
                             <a class="nav-link" href="<?= escape(baseUrl('orders.php')) ?>">Orders</a>
                         <?php endif; ?>
                         <a class="nav-account" href="<?= escape(baseUrl(authenticationDestination())) ?>">
@@ -101,6 +95,17 @@ function navigationClass(bool $isActive): string
                             <button class="btn btn-sm btn-outline-secondary" type="submit">Sign out</button>
                         </form>
                     <?php endif; ?>
+
+                    <div class="theme-control">
+                        <label for="theme-selector">Theme</label>
+                        <select id="theme-selector" class="form-select form-select-sm" data-theme-selector
+                            data-save-url="<?= escape(baseUrl('actions/theme.php')) ?>">
+                            <option value="skadi" <?= $activeTheme === 'skadi' ? 'selected' : '' ?>>Skadi</option>
+                            <option value="dark" <?= $activeTheme === 'dark' ? 'selected' : '' ?>>Dark</option>
+                            <option value="light" <?= $activeTheme === 'light' ? 'selected' : '' ?>>Light</option>
+                        </select>
+                        <span class="visually-hidden" data-theme-status aria-live="polite"></span>
+                    </div>
                 </div>
                 <noscript><p class="navigation-note">Theme switching requires JavaScript. The default theme remains readable.</p></noscript>
             </div>

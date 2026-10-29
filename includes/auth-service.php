@@ -147,7 +147,8 @@ function registerUser(PDO $connection, array $input): array
 function findAuthenticationUserById(PDO $connection, int $userId): array
 {
     $statement = $connection->prepare(
-        'SELECT u.id, u.password_hash, u.display_name, u.skadi_id, u.status, '
+        'SELECT u.id, u.password_hash, u.display_name, u.skadi_id, u.wallet_balance, '
+        . '(SELECT COUNT(*) FROM cart_items ci WHERE ci.user_id = u.id) AS cart_game_count, u.status, '
         . 'u.must_change_password, r.name AS role, COALESCE(up.theme, :default_theme) AS theme '
         . 'FROM users u INNER JOIN roles r ON r.id = u.role_id '
         . 'LEFT JOIN user_profiles up ON up.user_id = u.id WHERE u.id = :id LIMIT 1'
@@ -168,7 +169,8 @@ function findAuthenticationUserById(PDO $connection, int $userId): array
 function authenticateUser(PDO $connection, string $identifier, string $password): array
 {
     $statement = $connection->prepare(
-        'SELECT u.id, u.password_hash, u.display_name, u.skadi_id, u.status, '
+        'SELECT u.id, u.password_hash, u.display_name, u.skadi_id, u.wallet_balance, '
+        . '(SELECT COUNT(*) FROM cart_items ci WHERE ci.user_id = u.id) AS cart_game_count, u.status, '
         . 'u.must_change_password, r.name AS role, COALESCE(up.theme, :default_theme) AS theme '
         . 'FROM users u INNER JOIN roles r ON r.id = u.role_id '
         . 'LEFT JOIN user_profiles up ON up.user_id = u.id '

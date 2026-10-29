@@ -30,6 +30,8 @@ function setAuthenticatedUser(array $user): void
         'id' => (int) $user['id'],
         'display_name' => (string) $user['display_name'],
         'skadi_id' => (string) $user['skadi_id'],
+        'wallet_balance' => (string) ($user['wallet_balance'] ?? '0.00'),
+        'cart_game_count' => (int) ($user['cart_game_count'] ?? 0),
         'role' => (string) $user['role'],
         'status' => (string) $user['status'],
         'must_change_password' => (bool) $user['must_change_password'],
@@ -82,7 +84,9 @@ function synchronizeAuthenticatedSession(): void
     }
 
     $statement = db()->prepare(
-        'SELECT u.id, u.display_name, u.skadi_id, u.status, u.must_change_password, r.name AS role, '
+        'SELECT u.id, u.display_name, u.skadi_id, u.wallet_balance, '
+        . '(SELECT COUNT(*) FROM cart_items ci WHERE ci.user_id = u.id) AS cart_game_count, '
+        . 'u.status, u.must_change_password, r.name AS role, '
         . 'COALESCE(up.theme, :default_theme) AS theme FROM users u '
         . 'INNER JOIN roles r ON r.id = u.role_id '
         . 'LEFT JOIN user_profiles up ON up.user_id = u.id WHERE u.id = :id LIMIT 1'
@@ -103,6 +107,8 @@ function synchronizeAuthenticatedSession(): void
         'id' => (int) $databaseUser['id'],
         'display_name' => (string) $databaseUser['display_name'],
         'skadi_id' => (string) $databaseUser['skadi_id'],
+        'wallet_balance' => (string) $databaseUser['wallet_balance'],
+        'cart_game_count' => (int) $databaseUser['cart_game_count'],
         'role' => (string) $databaseUser['role'],
         'status' => (string) $databaseUser['status'],
         'must_change_password' => (bool) $databaseUser['must_change_password'],
