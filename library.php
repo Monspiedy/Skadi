@@ -47,17 +47,8 @@ require SKADI_ROOT . '/includes/header.php';
     <?php else: ?>
         <div class="library-grid">
             <?php foreach ($items as $item): ?>
-                <?php $coverUrl = safeGameMediaUrl($item['cover_path']); ?>
                 <article class="library-card">
-                    <?php if ($coverUrl !== null): ?>
-                        <img class="library-cover" src="<?= escape($coverUrl) ?>"
-                            alt="<?= escape($item['cover_alt'] ?: $item['title'] . ' cover') ?>">
-                    <?php else: ?>
-                        <div class="library-cover game-artwork-placeholder" role="img"
-                            aria-label="Original placeholder cover for <?= escape($item['title']) ?>">
-                            <span aria-hidden="true"><?= escape(mb_strtoupper(mb_substr($item['title'], 0, 2))) ?></span>
-                        </div>
-                    <?php endif; ?>
+                    <?php renderGameThumbnail($item, 'large'); ?>
                     <div class="library-card-body">
                         <div>
                             <h2><a href="<?= escape(baseUrl('game.php?id=' . (int) $item['game_id'])) ?>"><?= escape($item['title']) ?></a></h2>

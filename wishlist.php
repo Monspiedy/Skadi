@@ -23,13 +23,16 @@ require SKADI_ROOT . '/includes/header.php';
         <div class="wishlist-list">
             <?php foreach ($items as $item): ?>
                 <article class="wishlist-item">
-                    <div>
-                        <h2><a href="<?= escape(baseUrl('game.php?id=' . (int) $item['game_id'])) ?>"><?= escape($item['title']) ?></a></h2>
-                        <p><?= escape($item['short_description']) ?></p>
-                        <?php if ((int) $item['discount_percent'] > 0): ?>
-                            <p><span class="badge text-bg-info"><?= escape((int) $item['discount_percent']) ?>% off</span>
-                                <span class="text-decoration-line-through"><?= escape(commercePriceLabel($item['base_price'])) ?></span></p>
-                        <?php endif; ?>
+                    <div class="game-reference">
+                        <?php renderGameThumbnail($item, 'medium'); ?>
+                        <div class="game-reference-body">
+                            <h2><a href="<?= escape(baseUrl('game.php?id=' . (int) $item['game_id'])) ?>"><?= escape($item['title']) ?></a></h2>
+                            <p><?= escape($item['short_description']) ?></p>
+                            <?php if ((int) $item['discount_percent'] > 0): ?>
+                                <p><span class="badge text-bg-info"><?= escape((int) $item['discount_percent']) ?>% off</span>
+                                    <span class="text-decoration-line-through"><?= escape(commercePriceLabel($item['base_price'])) ?></span></p>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="wishlist-actions">
                         <strong><?= escape(commercePriceLabel($item['current_price'])) ?></strong>

@@ -71,17 +71,17 @@ require SKADI_ROOT . '/includes/header.php';
         <div class="profile-section-grid">
             <section class="profile-panel"><h2>Library</h2>
                 <?php if ($library === []): ?><p>No visible games.</p><?php else: ?><ul class="profile-list">
-                    <?php foreach ($library as $game): ?><li><a href="<?= escape(baseUrl('game.php?id=' . $game['id'])) ?>"><?= escape($game['title']) ?></a></li><?php endforeach; ?>
+                    <?php foreach ($library as $game): ?><li><div class="game-reference"><?php renderGameThumbnail($game); ?><a class="game-reference-body" href="<?= escape(baseUrl('game.php?id=' . $game['id'])) ?>"><?= escape($game['title']) ?></a></div></li><?php endforeach; ?>
                 </ul><?php endif; ?>
             </section>
             <section class="profile-panel"><h2>Reviews</h2>
                 <?php if ($reviews === []): ?><p>No active reviews.</p><?php else: ?><ul class="profile-list">
-                    <?php foreach ($reviews as $review): ?><li><a href="<?= escape(baseUrl('game.php?id=' . $review['game_id'] . '#reviews')) ?>"><?= escape($review['title']) ?></a> <strong><?= (int) $review['rating'] ?>/10</strong></li><?php endforeach; ?>
+                    <?php foreach ($reviews as $review): ?><li><div class="game-reference"><?php renderGameThumbnail($review); ?><span class="game-reference-body"><a href="<?= escape(baseUrl('game.php?id=' . $review['game_id'] . '#reviews')) ?>"><?= escape($review['title']) ?></a> <strong><?= (int) $review['rating'] ?>/10</strong></span></div></li><?php endforeach; ?>
                 </ul><?php endif; ?>
             </section>
             <section class="profile-panel"><h2>Recent activity</h2>
                 <?php if ($activity === []): ?><p>No visible activity.</p><?php else: ?><ul class="profile-list">
-                    <?php foreach ($activity as $item): ?><li><?= $item['type'] === 'review' ? 'Reviewed' : 'Added' ?> <a href="<?= escape(baseUrl('game.php?id=' . $item['game_id'])) ?>"><?= escape($item['game_title']) ?></a></li><?php endforeach; ?>
+                    <?php foreach ($activity as $item): ?><li><div class="game-reference"><?php renderGameThumbnail($item); ?><span class="game-reference-body"><?= $item['type'] === 'review' ? 'Reviewed' : 'Added' ?> <a href="<?= escape(baseUrl('game.php?id=' . $item['game_id'])) ?>"><?= escape($item['game_title']) ?></a></span></div></li><?php endforeach; ?>
                 </ul><?php endif; ?>
             </section>
             <section class="profile-panel"><h2>Friends</h2>

@@ -287,8 +287,11 @@ function loadOrderHistory(PDO $connection, int $userId, int $limit = 50): array
     $limit = max(1, min(100, $limit));
     $statement = $connection->prepare(
         "SELECT o.id, o.order_number, o.status, o.subtotal, o.discount_total, o.total, o.created_at,
-                oi.game_id, oi.game_title, oi.base_price, oi.discount_percent, oi.paid_price
+                oi.game_id, oi.game_title, oi.base_price, oi.discount_percent, oi.paid_price,
+                cover.storage_path AS cover_path, cover.alt_text AS cover_alt
          FROM orders o INNER JOIN order_items oi ON oi.order_id = o.id
+         LEFT JOIN game_media cover
+            ON cover.game_id = oi.game_id AND cover.media_type = 'cover' AND cover.sort_order = 0
          WHERE o.user_id = :user_id
          ORDER BY o.created_at DESC, o.id DESC, oi.id ASC LIMIT $limit"
     );
@@ -314,6 +317,8 @@ function loadOrderHistory(PDO $connection, int $userId, int $limit = 50): array
             'base_price' => $row['base_price'],
             'discount_percent' => (int) $row['discount_percent'],
             'paid_price' => $row['paid_price'],
+            'cover_path' => $row['cover_path'],
+            'cover_alt' => $row['cover_alt'],
         ];
     }
 

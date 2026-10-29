@@ -76,13 +76,16 @@ function loadCommunityCenter(PDO $connection, ?int $gameId, int $page = 1, int $
 
     $topics = $connection->prepare(
         "SELECT dt.id, dt.game_id, dt.title, dt.is_pinned, dt.is_locked, dt.updated_at,
-                game.title AS game_title, dc.name AS category_name, u.display_name, u.skadi_id,
+                game.title AS game_title, cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
+                dc.name AS category_name, u.display_name, u.skadi_id,
                 COUNT(dr.id) AS reply_count
          FROM discussion_topics dt JOIN games game ON game.id = dt.game_id
          JOIN discussion_categories dc ON dc.id = dt.category_id JOIN users u ON u.id = dt.author_user_id
+         LEFT JOIN game_media cover
+            ON cover.game_id = game.id AND cover.media_type = 'cover' AND cover.sort_order = 0
          LEFT JOIN discussion_replies dr ON dr.topic_id = dt.id AND dr.status = 'active'
          WHERE dt.status = 'active' AND game.status = 'published'$gameWhere
-         GROUP BY dt.id, game.title, dc.name, u.display_name, u.skadi_id
+         GROUP BY dt.id, game.title, cover.storage_path, cover.alt_text, dc.name, u.display_name, u.skadi_id
          ORDER BY dt.is_pinned DESC, reply_count DESC, dt.updated_at DESC LIMIT :limit OFFSET :offset"
     );
     foreach ($parameters as $name => $value) {
@@ -94,13 +97,16 @@ function loadCommunityCenter(PDO $connection, ?int $gameId, int $page = 1, int $
 
     $posts = $connection->prepare(
         "SELECT cp.id, cp.game_id, cp.body, cp.image_path, cp.created_at, game.title AS game_title,
+                cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
                 u.display_name, u.skadi_id, COUNT(DISTINCT cpl.user_id) AS like_count,
                 COUNT(DISTINCT cc.id) AS comment_count
          FROM community_posts cp JOIN games game ON game.id = cp.game_id JOIN users u ON u.id = cp.author_user_id
+         LEFT JOIN game_media cover
+            ON cover.game_id = game.id AND cover.media_type = 'cover' AND cover.sort_order = 0
          LEFT JOIN community_post_likes cpl ON cpl.post_id = cp.id
          LEFT JOIN community_comments cc ON cc.post_id = cp.id AND cc.status = 'active'
          WHERE cp.status = 'active' AND game.status = 'published'$gameWhere
-         GROUP BY cp.id, game.title, u.display_name, u.skadi_id
+         GROUP BY cp.id, game.title, cover.storage_path, cover.alt_text, u.display_name, u.skadi_id
          ORDER BY cp.created_at DESC, cp.id DESC LIMIT :limit OFFSET :offset"
     );
     foreach ($parameters as $name => $value) {
@@ -176,12 +182,16 @@ function loadDiscussionTopics(PDO $connection, array $filters, int $perPage = 10
     $pages = max(1, (int) ceil($total / $perPage));
     $page = min((int) $filters['page'], $pages);
     $sql = "SELECT dt.id, dt.game_id, dt.title, dt.is_pinned, dt.is_locked, dt.created_at, dt.updated_at,
-                   game.title AS game_title, dc.name AS category_name, u.display_name, u.skadi_id,
+                   game.title AS game_title, cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
+                   dc.name AS category_name, u.display_name, u.skadi_id,
                    COUNT(dr.id) AS reply_count
             FROM discussion_topics dt JOIN games game ON game.id = dt.game_id
             JOIN discussion_categories dc ON dc.id = dt.category_id JOIN users u ON u.id = dt.author_user_id
+            LEFT JOIN game_media cover
+                ON cover.game_id = game.id AND cover.media_type = 'cover' AND cover.sort_order = 0
             LEFT JOIN discussion_replies dr ON dr.topic_id = dt.id AND dr.status = 'active'
-            WHERE $where GROUP BY dt.id, game.title, dc.name, u.display_name, u.skadi_id
+            WHERE $where
+            GROUP BY dt.id, game.title, cover.storage_path, cover.alt_text, dc.name, u.display_name, u.skadi_id
             ORDER BY dt.is_pinned DESC, dt.updated_at DESC, dt.id DESC LIMIT :limit OFFSET :offset";
     $statement = $connection->prepare($sql);
     foreach ($parameters as $name => $value) {
@@ -418,13 +428,17 @@ function loadCommunityPosts(PDO $connection, ?int $gameId, int $page, ?int $view
     $page = min(max(1, $page), $pages);
     $statement = $connection->prepare(
         "SELECT cp.id, cp.game_id, cp.author_user_id, cp.body, cp.image_path, cp.created_at, cp.updated_at,
-                game.title AS game_title, u.display_name, u.skadi_id,
+                game.title AS game_title, cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
+                u.display_name, u.skadi_id,
                 COUNT(DISTINCT cpl.user_id) AS like_count, COUNT(DISTINCT cc.id) AS comment_count,
                 MAX(cpl.user_id = :viewer) AS viewer_liked
          FROM community_posts cp JOIN games game ON game.id = cp.game_id JOIN users u ON u.id = cp.author_user_id
+         LEFT JOIN game_media cover
+            ON cover.game_id = game.id AND cover.media_type = 'cover' AND cover.sort_order = 0
          LEFT JOIN community_post_likes cpl ON cpl.post_id = cp.id
          LEFT JOIN community_comments cc ON cc.post_id = cp.id AND cc.status = 'active'
-         WHERE $where GROUP BY cp.id, game.title, u.display_name, u.skadi_id
+         WHERE $where
+         GROUP BY cp.id, game.title, cover.storage_path, cover.alt_text, u.display_name, u.skadi_id
          ORDER BY cp.created_at DESC, cp.id DESC LIMIT :limit OFFSET :offset"
     );
     foreach ($parameters as $name => $value) {
@@ -440,14 +454,17 @@ function loadCommunityPost(PDO $connection, int $postId, ?int $viewerId): ?array
 {
     $statement = $connection->prepare(
         "SELECT cp.id, cp.game_id, cp.author_user_id, cp.body, cp.image_path, cp.created_at, cp.updated_at,
-                game.title AS game_title, u.display_name, u.skadi_id,
+                game.title AS game_title, cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
+                u.display_name, u.skadi_id,
                 COUNT(DISTINCT cpl.user_id) AS like_count, COUNT(DISTINCT cc.id) AS comment_count,
                 MAX(cpl.user_id = :viewer) AS viewer_liked
          FROM community_posts cp JOIN games game ON game.id = cp.game_id JOIN users u ON u.id = cp.author_user_id
+         LEFT JOIN game_media cover
+            ON cover.game_id = game.id AND cover.media_type = 'cover' AND cover.sort_order = 0
          LEFT JOIN community_post_likes cpl ON cpl.post_id = cp.id
          LEFT JOIN community_comments cc ON cc.post_id = cp.id AND cc.status = 'active'
          WHERE cp.id = :id AND cp.status = 'active' AND game.status = 'published'
-         GROUP BY cp.id, game.title, u.display_name, u.skadi_id"
+         GROUP BY cp.id, game.title, cover.storage_path, cover.alt_text, u.display_name, u.skadi_id"
     );
     $statement->execute(['viewer' => $viewerId ?? 0, 'id' => $postId]);
     return $statement->fetch() ?: null;

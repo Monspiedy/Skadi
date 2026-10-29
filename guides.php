@@ -71,8 +71,13 @@ require SKADI_ROOT . '/includes/header.php';
                         <img src="<?= escape($thumbnailUrl) ?>" alt="" class="guide-thumbnail">
                     <?php endif; ?>
                     <div class="guide-card-body">
-                        <p class="eyebrow"><?= escape($guide['game_title']) ?> · <?= escape(guideCategories()[$guide['category']]) ?></p>
-                        <h2><a href="<?= escape(baseUrl('guide.php?id=' . (int) $guide['id'])) ?>"><?= escape($guide['title']) ?></a></h2>
+                        <div class="game-reference">
+                            <?php renderGameThumbnail($guide); ?>
+                            <div class="game-reference-body">
+                                <p class="eyebrow"><?= escape($guide['game_title']) ?> · <?= escape(guideCategories()[$guide['category']]) ?></p>
+                                <h2><a href="<?= escape(baseUrl('guide.php?id=' . (int) $guide['id'])) ?>"><?= escape($guide['title']) ?></a></h2>
+                            </div>
+                        </div>
                         <p><?= escape($guide['summary']) ?></p>
                         <p class="guide-byline">By <a href="<?= escape(baseUrl('profile.php?id=' . rawurlencode($guide['skadi_id']))) ?>"><?= escape($guide['display_name']) ?></a>
                             <?php if (!empty($guide['is_owner'])): ?><span class="badge text-bg-info">Owner</span><?php endif; ?>

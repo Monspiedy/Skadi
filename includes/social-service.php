@@ -224,9 +224,10 @@ function loadProfileLibrary(PDO $connection, int $userId, int $limit = 12): arra
 {
     $statement = $connection->prepare(
         "SELECT g.id, g.title, li.acquired_at,
-            (SELECT gm.storage_path FROM game_media gm
-             WHERE gm.game_id = g.id AND gm.media_type = 'cover' ORDER BY gm.sort_order LIMIT 1) AS cover_path
+                cover.storage_path AS cover_path, cover.alt_text AS cover_alt
          FROM library_items li INNER JOIN games g ON g.id = li.game_id
+         LEFT JOIN game_media cover
+            ON cover.game_id = g.id AND cover.media_type = 'cover' AND cover.sort_order = 0
          WHERE li.user_id = :user_id AND li.removed_at IS NULL AND li.hidden_at IS NULL
          ORDER BY li.acquired_at DESC LIMIT " . max(1, min(50, $limit))
     );
@@ -238,8 +239,11 @@ function loadProfileLibrary(PDO $connection, int $userId, int $limit = 12): arra
 function loadProfileReviews(PDO $connection, int $userId, int $limit = 12): array
 {
     $statement = $connection->prepare(
-        "SELECT r.game_id, g.title, r.rating, r.body, r.created_at, r.updated_at
+        "SELECT r.game_id, g.title, r.rating, r.body, r.created_at, r.updated_at,
+                cover.storage_path AS cover_path, cover.alt_text AS cover_alt
          FROM reviews r INNER JOIN games g ON g.id = r.game_id
+         LEFT JOIN game_media cover
+            ON cover.game_id = g.id AND cover.media_type = 'cover' AND cover.sort_order = 0
          WHERE r.user_id = :user_id AND r.status = 'active'
          ORDER BY r.updated_at DESC LIMIT " . max(1, min(50, $limit))
     );
@@ -277,6 +281,8 @@ function buildProfileActivity(array $library, array $reviews, int $limit = 12): 
             'type' => 'library',
             'game_id' => (int) $item['id'],
             'game_title' => (string) $item['title'],
+            'cover_path' => $item['cover_path'] ?? null,
+            'cover_alt' => $item['cover_alt'] ?? null,
             'occurred_at' => (string) $item['acquired_at'],
         ];
     }
@@ -285,6 +291,8 @@ function buildProfileActivity(array $library, array $reviews, int $limit = 12): 
             'type' => 'review',
             'game_id' => (int) $review['game_id'],
             'game_title' => (string) $review['title'],
+            'cover_path' => $review['cover_path'] ?? null,
+            'cover_alt' => $review['cover_alt'] ?? null,
             'occurred_at' => (string) $review['updated_at'],
         ];
     }

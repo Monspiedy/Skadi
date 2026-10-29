@@ -28,7 +28,10 @@ require SKADI_ROOT . '/includes/header.php';
                     <ul>
                         <?php foreach ($order['items'] as $item): ?>
                             <li>
-                                <a href="<?= escape(baseUrl('game.php?id=' . $item['game_id'])) ?>"><?= escape($item['game_title']) ?></a>
+                                <div class="game-reference">
+                                    <?php renderGameThumbnail($item); ?>
+                                    <a class="game-reference-body" href="<?= escape(baseUrl('game.php?id=' . $item['game_id'])) ?>"><?= escape($item['game_title']) ?></a>
+                                </div>
                                 <span>
                                     <?= $item['discount_percent'] > 0 ? escape($item['discount_percent'] . '% off · ') : '' ?>
                                     paid <?= escape(commercePriceLabel($item['paid_price'])) ?>

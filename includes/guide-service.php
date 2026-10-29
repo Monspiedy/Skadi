@@ -191,7 +191,8 @@ function loadGuideList(PDO $connection, array $filters, int $perPage = 6): array
         'helpful' => 'helpful_score DESC, helpful_count DESC, g.published_at DESC, g.id DESC',
     ];
     $sql = "SELECT g.id, g.game_id, g.title, g.summary, g.category, g.thumbnail_path, g.published_at,
-                   game.title AS game_title, u.skadi_id, u.display_name,
+                   game.title AS game_title, cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
+                   u.skadi_id, u.display_name,
                    EXISTS(SELECT 1 FROM library_items li WHERE li.user_id = g.author_user_id
                        AND li.game_id = g.game_id AND li.removed_at IS NULL) AS is_owner,
                    COALESCE(v.helpful_count, 0) AS helpful_count,
@@ -202,6 +203,8 @@ function loadGuideList(PDO $connection, array $filters, int $perPage = 6): array
                    COALESCE(v.vote_count, 0) + COALESCE(f.favorite_count, 0) + COALESCE(c.comment_count, 0) AS popularity_count
             FROM guides g JOIN games game ON game.id = g.game_id
             JOIN users u ON u.id = g.author_user_id
+            LEFT JOIN game_media cover
+                ON cover.game_id = game.id AND cover.media_type = 'cover' AND cover.sort_order = 0
             LEFT JOIN (SELECT guide_id, SUM(vote_value = 1) helpful_count,
                 SUM(vote_value = -1) not_helpful_count, SUM(vote_value) helpful_score, COUNT(*) vote_count
                 FROM guide_votes GROUP BY guide_id) v ON v.guide_id = g.id

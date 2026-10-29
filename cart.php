@@ -29,18 +29,21 @@ require SKADI_ROOT . '/includes/header.php';
             <div class="cart-list">
                 <?php foreach ($cart['items'] as $item): ?>
                     <article class="cart-item">
-                        <div>
-                            <h2><a href="<?= escape(baseUrl('game.php?id=' . (int) $item['game_id'])) ?>"><?= escape($item['title']) ?></a></h2>
-                            <?php if ($item['discount_percent'] > 0): ?>
-                                <p><span class="badge text-bg-info"><?= escape($item['discount_percent']) ?>% off</span>
-                                    <span class="text-decoration-line-through"><?= escape(commercePriceLabel($item['base_price'])) ?></span></p>
-                            <?php endif; ?>
-                            <?php if ($item['price_changed']): ?>
-                                <p class="price-change-notice" role="status">
-                                    Price changed from <?= escape(commercePriceLabel($item['price_when_added'])) ?>
-                                    to <?= escape(commercePriceLabel($item['current_price'])) ?> since it was added.
-                                </p>
-                            <?php endif; ?>
+                        <div class="game-reference">
+                            <?php renderGameThumbnail($item, 'medium'); ?>
+                            <div class="game-reference-body">
+                                <h2><a href="<?= escape(baseUrl('game.php?id=' . (int) $item['game_id'])) ?>"><?= escape($item['title']) ?></a></h2>
+                                <?php if ($item['discount_percent'] > 0): ?>
+                                    <p><span class="badge text-bg-info"><?= escape($item['discount_percent']) ?>% off</span>
+                                        <span class="text-decoration-line-through"><?= escape(commercePriceLabel($item['base_price'])) ?></span></p>
+                                <?php endif; ?>
+                                <?php if ($item['price_changed']): ?>
+                                    <p class="price-change-notice" role="status">
+                                        Price changed from <?= escape(commercePriceLabel($item['price_when_added'])) ?>
+                                        to <?= escape(commercePriceLabel($item['current_price'])) ?> since it was added.
+                                    </p>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="cart-item-actions">
                             <strong><?= escape(commercePriceLabel($item['current_price'])) ?></strong>
