@@ -514,13 +514,44 @@ function addCommunityComment(PDO $connection, int $userId, int $postId, string $
 function reportableContentTypes(): array
 {
     return [
-        'review' => ['column' => 'review_id', 'table' => 'reviews', 'public_status' => 'active'],
-        'guide' => ['column' => 'guide_id', 'table' => 'guides', 'public_status' => 'published'],
-        'guide_comment' => ['column' => 'guide_comment_id', 'table' => 'guide_comments', 'public_status' => 'active'],
-        'topic' => ['column' => 'discussion_topic_id', 'table' => 'discussion_topics', 'public_status' => 'active'],
-        'reply' => ['column' => 'discussion_reply_id', 'table' => 'discussion_replies', 'public_status' => 'active'],
-        'post' => ['column' => 'community_post_id', 'table' => 'community_posts', 'public_status' => 'active'],
-        'community_comment' => ['column' => 'community_comment_id', 'table' => 'community_comments', 'public_status' => 'active'],
+        'review' => [
+            'column' => 'review_id',
+            'from' => 'reviews item JOIN games game ON game.id = item.game_id',
+            'public_where' => "item.status = 'active' AND game.status = 'published'",
+        ],
+        'guide' => [
+            'column' => 'guide_id',
+            'from' => 'guides item JOIN games game ON game.id = item.game_id',
+            'public_where' => "item.status = 'published' AND game.status = 'published'",
+        ],
+        'guide_comment' => [
+            'column' => 'guide_comment_id',
+            'from' => 'guide_comments item JOIN guides parent ON parent.id = item.guide_id '
+                . 'JOIN games game ON game.id = parent.game_id',
+            'public_where' => "item.status = 'active' AND parent.status = 'published' AND game.status = 'published'",
+        ],
+        'topic' => [
+            'column' => 'discussion_topic_id',
+            'from' => 'discussion_topics item JOIN games game ON game.id = item.game_id',
+            'public_where' => "item.status = 'active' AND game.status = 'published'",
+        ],
+        'reply' => [
+            'column' => 'discussion_reply_id',
+            'from' => 'discussion_replies item JOIN discussion_topics parent ON parent.id = item.topic_id '
+                . 'JOIN games game ON game.id = parent.game_id',
+            'public_where' => "item.status = 'active' AND parent.status = 'active' AND game.status = 'published'",
+        ],
+        'post' => [
+            'column' => 'community_post_id',
+            'from' => 'community_posts item JOIN games game ON game.id = item.game_id',
+            'public_where' => "item.status = 'active' AND game.status = 'published'",
+        ],
+        'community_comment' => [
+            'column' => 'community_comment_id',
+            'from' => 'community_comments item JOIN community_posts parent ON parent.id = item.post_id '
+                . 'JOIN games game ON game.id = parent.game_id',
+            'public_where' => "item.status = 'active' AND parent.status = 'active' AND game.status = 'published'",
+        ],
     ];
 }
 
@@ -538,8 +569,12 @@ function submitContentReport(PDO $connection, int $userId, string $type, int $ta
         throw new CommunityException('Report details must be at most 1,000 readable characters.');
     }
     $target = $types[$type];
-    $exists = $connection->prepare("SELECT 1 FROM {$target['table']} WHERE id = :id AND status = :status");
-    $exists->execute(['id' => $targetId, 'status' => $target['public_status']]);
+    // The fixed map checks the complete public parent chain, not only the child row status.
+    // This prevents a forged child ID from revealing or reporting content hidden by moderation.
+    $exists = $connection->prepare(
+        "SELECT 1 FROM {$target['from']} WHERE item.id = :id AND {$target['public_where']}"
+    );
+    $exists->execute(['id' => $targetId]);
     if (!$exists->fetchColumn()) {
         throw new CommunityException('The reported content is unavailable.');
     }

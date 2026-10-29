@@ -3,7 +3,7 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 14 administration and moderation is complete. Registration, login, forced first-login
+Phase 15 integration and security review is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
@@ -25,6 +25,10 @@ publish text/image posts, like and comment, and report public content. Private d
 messages never appear in these public feeds. Administrators now have a consistent dashboard,
 safe account search/access controls, transactional wallet adjustments, paginated commerce history,
 public-content moderation, report resolution and weekend-sale inspection/regeneration.
+The final security pass verified clean import, primary user journeys, mutation guards, pricing and
+wallet transactions, privacy, blocking, uploads, private attachment access and administrator boundaries.
+Reports now require the target and its complete parent chain to remain public, preventing forged IDs
+from reporting replies or comments hidden through parent moderation.
 
 PLANNED ENVIRONMENT
 -------------------

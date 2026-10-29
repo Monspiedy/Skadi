@@ -28,6 +28,18 @@
 - Blocked users cannot message or send friend requests.
 - Server ignores manipulated browser prices and roles.
 
+## Final integration runner
+
+Run the ignored reusable Phase 15 suite from the repository root:
+
+```powershell
+& .\storage\cache\phase15-tests\run-phase15-tests.ps1
+```
+
+The runner creates a fresh isolated MariaDB data directory, imports `kanta.sql`, runs database and HTTP negative cases, captures mobile/desktop headless-Chrome screenshots, lints every PHP file, syntax-checks project JavaScript, scans all form handlers for method/CSRF guards, confirms admin code has no private-chat references, and runs `git diff --check`. It shuts down its temporary servers in `finally` blocks. The normal XAMPP data directory is not modified.
+
+Retained focused regressions remain available under `storage/cache/phase11-tests/`, `phase13-tests/` and `phase14-tests/`. Their runners should be used when chat/attachment, community/report or administration boundaries change.
+
 ## Presentation smoke test
 
 1. Fresh database import.

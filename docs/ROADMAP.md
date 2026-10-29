@@ -27,7 +27,7 @@ The primary date is aggressive. Core course requirements must remain more import
 | 12 | Nov 7 | Player guides, voting, favorites and comments | Complete |
 | 13 | Nov 8 | Community Center, discussions and community posts | Complete |
 | 14 | Nov 9 | Admin panel and moderation | Complete |
-| 15 | Nov 10 | Integration, security review and fixes | Not started |
+| 15 | Nov 10 | Integration, security review and fixes | Complete |
 | 16 | Nov 11 | Final seed data, documentation and presentation rehearsal | Not started |
 
 ## Priority gates
