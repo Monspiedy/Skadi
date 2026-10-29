@@ -55,3 +55,10 @@ Retained focused regressions remain available under `storage/cache/phase11-tests
 11. Demonstrate theme switching and mobile layout.
 
 The final phase must convert this list into a short repeatable presentation script.
+
+The completed presentation order and concise explanation/Q&A are in `docs/PRESENTATION.md`.
+The ignored local Phase 16 runner is retained at
+`storage/cache/phase16-tests/run-phase16-tests.ps1` for coordinator review. It creates a fresh
+isolated MariaDB data directory, imports `kanta.sql`, exercises the complete presentation workflow,
+runs authenticated user/admin headless-browser checks, lints PHP, checks project JavaScript and
+audits tracked runtime/secret/image hygiene. It does not modify the normal XAMPP data directory.

@@ -1,225 +1,210 @@
-SKADI - INSTALLATION AND USER GUIDE
-===================================
+SKADI - XAMPP INSTALLATION, USE AND SECURITY GUIDE
+==================================================
 
-STATUS
-------
-Phase 15 integration and security review is complete. Registration, login, forced first-login
-password change, protected account/admin access and CSRF-protected logout remain
-available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
-Dark and Light themes. The store now supports featured games, title search, genre and
-price filters, safe sorting and pagination. Read-only game pages show complete seeded
-facts, active rating summaries, owner reviews, uploaded covers and screenshot galleries. Admins
-can manage games, genres, validated image media and an ordered maximum of five featured
-games. Authenticated users can keep a database-backed cart, complete demo-money purchases,
-and inspect wallet and order history. Users can search and hide library games, permanently remove
-access without a refund, manage a wishlist and publish one 1-10 review per owned game. From Friday
-00:00 through Monday 00:00 in Europe/Helsinki, one persisted shared discount set applies to all users. Public
-profiles use immutable Skadi IDs; users can search for people, manage friend requests and block accounts while
-one shared privacy rule protects libraries, reviews, activity and friend lists. Accepted unblocked friends can
-exchange direct messages and private validated attachments with asynchronous unread/read updates.
-Any signed-in user can now draft or publish a safe BBCode guide for an active game, vote,
-favorite and comment. The public Community Center now aggregates game-filtered discussions,
-guides, screenshots and community posts. Each game has Overview, Discussions, Guides,
-Screenshots and Reviews tabs. Signed-in users can create and edit discussion content,
-publish text/image posts, like and comment, and report public content. Private direct
-messages never appear in these public feeds. Administrators now have a consistent dashboard,
-safe account search/access controls, transactional wallet adjustments, paginated commerce history,
-public-content moderation, report resolution and weekend-sale inspection/regeneration.
-The final security pass verified clean import, primary user journeys, mutation guards, pricing and
-wallet transactions, privacy, blocking, uploads, private attachment access and administrator boundaries.
-Reports now require the target and its complete parent chain to remain public, preventing forged IDs
-from reporting replies or comments hidden through parent moderation.
+1. PURPOSE AND VERIFIED STATUS
+------------------------------
+Skadi is an educational game store and community application. All money is demonstration
+money; there is no real payment processing or game download service.
 
-PLANNED ENVIRONMENT
--------------------
-- XAMPP: D:\xampp
-- Project: D:\xampp\htdocs\Skadi
-- URL: http://localhost/Skadi/
-- PHP: 8.2
-- Database: MariaDB/MySQL, database name "skadi"
+The Phase 16 release rehearsal used PHP 8.2.12 and the XAMPP MariaDB 10.4.32 binaries.
+A fresh isolated import of kanta.sql produced 39 tables/views. Registration, first-login
+password changes, catalog browsing, checkout, order/wallet/library updates, reviews, a
+weekend-sale regeneration, friends/chat, a guide, a discussion, admin game CRUD and an
+audited wallet adjustment all passed. Authenticated browser checks also passed at 390 px
+and 1440 px with no console errors or horizontal overflow.
 
-DATABASE INSTALLATION
----------------------
-1. Start Apache and MySQL in XAMPP.
-2. Import kanta.sql into MariaDB/MySQL.
-3. Copy config/database.example.php to config/database.local.php.
-4. Enter local database credentials in config/database.local.php.
-5. Open http://localhost/Skadi/.
+The normal XAMPP control-panel MariaDB data directory was not repaired or verified in that
+test environment because its existing ibdata1 file was not writable. Follow the checks in
+section 3, step 7 on the presentation computer before relying on the site.
 
-CURRENT PAGES
--------------
-- http://localhost/Skadi/ - home page
-- http://localhost/Skadi/store.php - searchable and filterable game catalog
-- http://localhost/Skadi/game.php?id=1 - game detail, owner review and active review list
-- http://localhost/Skadi/community.php - game-filtered public Community Center
-- http://localhost/Skadi/game-community.php?id=1 - per-game community hub and tabs
-- http://localhost/Skadi/discussions.php - searchable, categorized and paginated discussions
-- http://localhost/Skadi/discussion.php?id=1 - topic, replies, editing and reporting
-- http://localhost/Skadi/posts.php - paginated public community posts
-- http://localhost/Skadi/community-post.php?id=1 - post likes, comments and reporting
-- http://localhost/Skadi/guides.php - paginated global/per-game guide lists and sorts
-- http://localhost/Skadi/guide.php?id=1 - public guide, helpful score, favorites and comments
-- http://localhost/Skadi/guide-edit.php - authenticated draft/publish editor with safe preview
-- http://localhost/Skadi/people.php - public display-name and exact Skadi ID search
-- http://localhost/Skadi/profile.php?id=SKD-DEMO-0001 - public profile with privacy-aware sections
-- http://localhost/Skadi/profile-settings.php - authenticated profile, avatar and privacy settings
-- http://localhost/Skadi/friends.php - authenticated friends, requests and created blocks
-- http://localhost/Skadi/chat.php - authenticated direct chat for current unblocked friends
-- http://localhost/Skadi/library.php - searchable authenticated library and access controls
-- http://localhost/Skadi/wishlist.php - authenticated wishlist and move-to-cart controls
-- http://localhost/Skadi/register.php - account registration
-- http://localhost/Skadi/login.php - login-name/email sign-in
-- http://localhost/Skadi/account.php - authenticated account page
-- http://localhost/Skadi/cart.php - authenticated persistent cart and checkout
-- http://localhost/Skadi/wallet.php - authenticated balance and wallet ledger history
-- http://localhost/Skadi/orders.php - authenticated purchase history and price snapshots
-- http://localhost/Skadi/change-password.php - authenticated password change
-- http://localhost/Skadi/admin/ - admin-only dashboard and statistics
-- http://localhost/Skadi/admin/games.php - game, cover and screenshot management
-- http://localhost/Skadi/admin/genres.php - genre management
-- http://localhost/Skadi/admin/featured.php - ordered featured-game selection
-- http://localhost/Skadi/admin/users.php - safe account access and wallet adjustment controls
-- http://localhost/Skadi/admin/commerce.php - read-only order and wallet histories
-- http://localhost/Skadi/admin/moderation.php - public-content moderation queues
-- http://localhost/Skadi/admin/reports.php - public-content report queue and resolution notes
-- http://localhost/Skadi/admin/weekend-sale.php - sale generation audit and admin-only regeneration
-- http://localhost/Skadi/health.php - non-sensitive environment health check
-- /errors/403.php, /errors/404.php and /errors/500.php - shared error pages
+2. REQUIREMENTS
+---------------
+- Windows with XAMPP installed at D:\xampp
+- PHP 8.2 and MariaDB/MySQL
+- Project folder D:\xampp\htdocs\Skadi
+- Local URL http://localhost/Skadi/
+- Apache modules that allow the committed .htaccess rules
 
-The home and error pages do not require a database connection. On the health page,
-select the database connectivity test only after creating database.local.php.
+No Composer, npm, framework, CDN or external account is required. Bootstrap 5.3.8 is stored
+locally under assets/bootstrap/.
 
-THEMES AND OFFLINE ASSETS
--------------------------
-Use the Theme selector in the main navigation to choose Skadi, Dark or Light.
-Guest preferences remain in that browser's localStorage. Signed-in preferences are
-saved in user_profiles through a CSRF-protected JSON endpoint and are written into
-the next page before CSS loads. With JavaScript disabled, the server-rendered Skadi
-theme and all navigation/content remain readable; interactive switching is disabled.
+3. CLEAN XAMPP SETUP
+--------------------
+IMPORTANT: kanta.sql resets the Skadi schema. Back up an existing skadi database before import.
 
-Bootstrap 5.3.8 CSS and JavaScript are stored in assets/bootstrap/. Its upstream
-MIT license is retained at assets/bootstrap/LICENSE. The application does not load
-presentation assets from a CDN.
+1. Copy/clone the project to:
+   D:\xampp\htdocs\Skadi
 
-GAME MEDIA UPLOADS
+2. Open the XAMPP Control Panel and start Apache and MySQL.
+
+3. Import the database using ONE of these methods.
+
+   phpMyAdmin:
+   a. Open http://localhost/phpmyadmin/.
+   b. Choose Import.
+   c. Select D:\xampp\htdocs\Skadi\kanta.sql.
+   d. Keep UTF-8/utf8mb4-compatible defaults and run the import.
+   e. Confirm that database skadi exists. The dump creates/selects it automatically.
+
+   MariaDB command line from PowerShell (prompts for the MariaDB password):
+   & D:\xampp\mysql\bin\mysql.exe --user=root --password --execute="SOURCE D:/xampp/htdocs/Skadi/kanta.sql"
+
+   If the local root account intentionally has a blank password, use:
+   & D:\xampp\mysql\bin\mysql.exe --user=root --password= --execute="SOURCE D:/xampp/htdocs/Skadi/kanta.sql"
+
+4. Create the ignored local configuration:
+   Copy-Item D:\xampp\htdocs\Skadi\config\database.example.php D:\xampp\htdocs\Skadi\config\database.local.php
+
+5. Edit config/database.local.php. For a default local XAMPP installation it normally uses:
+   host     127.0.0.1
+   port     3306
+   database skadi
+   charset  utf8mb4
+   username root
+   password the local MariaDB password (often blank only on a local XAMPP setup)
+
+6. Open http://localhost/Skadi/.
+
+7. Verify the environment:
+   - http://localhost/Skadi/health.php should show the PHP checks.
+   - http://localhost/Skadi/health.php?check=db should report successful DB connectivity.
+   - http://localhost/Skadi/store.php should show twelve seeded games.
+
+4. INITIAL ACCOUNTS AND FIRST LOGIN
+-----------------------------------
+The clean dump contains two local-only demonstration accounts:
+
+Administrator
+  Login:    skadi_admin
+  Password: ChangeMe!2026
+
+User
+  Login:    demo_player
+  Password: ChangeMe!2026
+
+Both accounts have must_change_password enabled. After signing in, enter the temporary
+password and choose a new strong password before any protected page can be used.
+
+For a hosted installation, do not keep the seed credentials. Register a separate account,
+use the administrator account to promote it to admin, verify the new administrator works,
+and only then demote/block the seed accounts. The final-active-admin protection prevents
+accidentally removing the last active administrator.
+
+5. USER WORKFLOWS
+-----------------
+Create and sign in
+  1. Open register.php and enter an immutable login name, email, public display name and password.
+  2. Registration creates the profile, public Skadi ID and EUR 100.00 demo balance atomically.
+  3. Later sign in with the login name or email. Public pages never show the login name.
+
+Browse and purchase
+  1. Open Store; search, filter by genre/price, choose a safe sort and browse pages.
+  2. Open a game, add it to Cart and review the current server price.
+  3. Complete checkout. The server rechecks price, ownership and balance in one transaction.
+  4. Confirm the same purchase in Orders, Wallet and Library.
+
+Library, wishlist and reviews
+  - Add non-owned games to Wishlist and move them to Cart.
+  - Hide/unhide library entries. Permanent removal requires confirmation, gives no refund
+    and preserves order/wallet history.
+  - Current owners can create or edit one 1-10 review per game.
+
+Profile, friends and chat
+  - Edit display name, email, biography, theme, avatar and privacy choices in Profile settings.
+  - Find users by partial display name or exact Skadi ID; send/accept/decline/cancel requests.
+  - Accepted unblocked friends can chat. Polling refreshes about every three seconds.
+  - Chat supports text plus one JPG, PNG, WebP, PDF or TXT attachment up to 5 MB.
+  - Hide removes a message only for the current participant. Delete for everyone physically
+    removes the sender's message and attachment without a tombstone.
+  - Blocking removes/prevents friendship and immediately disables chat/private access.
+
+Guides and community
+  - Any signed-in user can draft/publish a guide for a published game. The editor supports
+    a small safe BBCode subset, votes, favorites and comments.
+  - Community Center aggregates discussions, guides, screenshots and posts with a game filter.
+  - Game hubs reuse the canonical Overview, Discussions, Guides, Screenshots and Reviews data.
+  - Users can create categorized topics/replies and text/image posts, like/comment and report
+    supported public content. Private chat never appears in community/admin feeds.
+
+Themes and JavaScript
+  - Choose Skadi, Dark or Light in the navigation. Guest choice uses localStorage; signed-in
+    choice is also stored in user_profiles.
+  - JavaScript visibly powers theme persistence, countdown, chat polling/unread updates,
+    upload previews, confirmations and guide preview. Core catalog content renders server-side.
+
+6. ADMINISTRATOR WORKFLOWS
+--------------------------
+Every admin page and handler rechecks the current database-backed administrator role.
+
+- Dashboard: inspect user, game, order, report and hidden-content counts.
+- Games/Genres: create and edit catalog facts and many-to-many genre assignments. Referenced
+  records are not silently deleted.
+- Media: upload JPG/PNG/WebP covers and screenshots. Files are checked by content, extension,
+  size and dimensions, then receive generated server filenames.
+- Featured: select/order at most five published games.
+- Users: search safe account fields, change role/status and make signed wallet adjustments.
+  Adjustments require a reason, cannot produce a negative balance and create ledger/audit rows.
+- Commerce: inspect read-only order and wallet histories.
+- Moderation/Reports: hide, restore or delete supported public content, pin/lock topics and
+  resolve/dismiss reports with notes. Deleted moderation records remain auditable.
+- Weekend sale: inspect persisted generations/discounts. During an active Friday-to-Monday
+  Helsinki window, acknowledge the warning to regenerate the shared demonstration sale.
+
+Administrators never receive password hashes, private login names or a private-message reader.
+
+7. DATA, UPLOAD AND SECURITY NOTES
+----------------------------------
+- config/database.local.php, .env files, logs, caches and runtime uploads are ignored by Git.
+- Public images are stored under uploads/* after allowlist validation and generated naming.
+- Chat attachments are stored in storage/chat-attachments and served only by an endpoint that
+  confirms the current participant and friendship/block state.
+- uploads/.htaccess and storage/chat-attachments/.htaccess add local Apache defense in depth.
+- Passwords use password_hash()/password_verify(); sessions regenerate after authentication.
+- Session cookies are HttpOnly, SameSite=Lax and scoped to /Skadi/. Secure is intentionally off
+  on local HTTP and turns on when PHP detects HTTPS.
+- Every mutation uses POST and CSRF validation. Request values use PDO prepared statements.
+- Checkout and wallet changes use transactions, row locks and server-calculated values.
+- Production must use HTTPS, production session storage, least-privilege DB credentials and
+  web-server rules that disable executable handlers in every upload directory.
+- The included twelve game names/factual seed summaries are demonstration data. No promotional
+  artwork is tracked; the interface uses original CSS placeholders and local licensed Bootstrap.
+
+8. TROUBLESHOOTING
 ------------------
-Administrators can upload JPG, PNG and WebP covers and screenshots from a saved game's
-edit page. Covers are limited to 5 MB and screenshots to 8 MB. The server validates the
-actual MIME type, extension, readable image dimensions and context-specific dimensions,
-then generates a random storage filename. Replaced and deleted managed files are cleaned
-from uploads/covers or uploads/screenshots. Static assets are never deleted by this path.
-The uploads/.htaccess defense prevents script execution; production hosting should also
-disable executable handlers in the upload directory at the virtual-host level.
+Apache will not start
+  - Check the XAMPP log for a port 80/443 conflict. Stop the conflicting service or configure
+    Apache consistently, then use the matching URL.
 
-DEMO COMMERCE
--------------
-Cart mutations and checkout require an authenticated session, POST and a valid CSRF token.
-The browser submits game identifiers only; current prices, active persisted discounts,
-ownership and wallet balance are loaded by the server. Checkout locks the affected rows and
-creates the order, immutable order-item price snapshots, wallet debit, ownership records and
-cart cleanup in one database transaction. Free games create order and ownership history while
-leaving the wallet unchanged. Users cannot top up demo funds.
+MySQL will not start / ibdata1 is not writable
+  - Stop MySQL before changing anything. Check Windows permissions and the XAMPP MySQL log.
+  - Do not delete/reset an existing data directory without a backup. The release tests used a
+    separate isolated data directory and did not repair the normal XAMPP directory.
 
-WEEKEND SALE
-------------
-Sale periods use real Europe/Helsinki calendar boundaries: Friday 00:00 is inclusive and
-Monday 00:00 is exclusive. The first request during a missing period creates one complete
-shared discount set for every paid published game. Discounts are persisted in five-point
-steps from 10 to 75 percent, so refreshes and different users see the same generation.
+"Local database configuration is missing"
+  - Copy config/database.example.php to config/database.local.php and enter local values.
 
-Catalog, cart, wishlist moves and checkout all use the same server current-price service.
-Free games are excluded, prices outside the window return to base price, and completed
-order-item snapshots never change. The storefront JavaScript countdown uses a server-provided
-timestamp for display only; checkout does not trust it. Administrators can inspect generation
-audit information and regenerate the active sale after acknowledging a warning.
+Database connectivity fails
+  - Confirm MySQL is running, the host/port/user/password are correct and database skadi exists.
+  - Re-import kanta.sql only if resetting Skadi data is intended.
 
-LIBRARY, WISHLIST AND REVIEWS
------------------------------
-Library searches and visibility filters are scoped to the signed-in user. Hide, unhide and
-permanent removal require POST plus CSRF. Permanent removal also requires explicit confirmation,
-does not refund demo money and does not delete order or wallet history. Reacquiring a removed game
-reactivates its unique library row instead of creating duplicate ownership.
+404 or broken links under another folder name
+  - The application is configured for /Skadi in config/app.php and the committed .htaccess paths.
+    Keep the folder name Skadi, or update both settings consistently.
 
-Wishlist mutations are authenticated and CSRF-protected. Owned games cannot be wishlisted. Moving
-a wishlist item to the cart is transactional, and a completed purchase removes matching wishlist
-rows in the checkout transaction. Only current owners may create or edit one rating from 1 to 10
-per game. Review text is escaped. Deleted and moderation-hidden reviews do not appear publicly and
-do not affect the displayed average or review count.
+Uploads fail
+  - Confirm PHP file_uploads is enabled, upload/post limits exceed the documented feature limit,
+    and the relevant uploads/* or storage/chat-attachments directory is writable by Apache.
 
-PROFILES, PRIVACY AND FRIENDS
------------------------------
-Display names are changeable and may be duplicated. Login names remain private and immutable; the public,
-immutable Skadi ID is used for profile routes and exact-ID searches. Profile settings also cover unique email,
-biography, Skadi/Dark/Light theme, incoming-request preference, presence visibility and public/friends-only/private
-detail visibility. Avatar uploads accept content-verified JPG, PNG or WebP images up to 2 MB and use generated names.
+Login returns to password change
+  - This is expected for seed accounts until the temporary password is replaced.
 
-The same privacy decision protects library, active reviews, recent activity and accepted friends. Display name,
-avatar and subtle Skadi ID remain discoverable. Presence is based on recent authenticated activity and disappears
-when hidden. Friend requests can be sent, cancelled, accepted or declined; either friend can remove the relationship.
-Acceptance enforces a maximum of 100 friends on the server. Blocking removes friendship, prevents new requests and
-private-detail access, and remains active until the blocker removes it. Direct chat reuses these same relationship rules.
+Sale discount is not active
+  - The real Helsinki window is Friday 00:00 through Monday 00:00. Outside it the base price is
+    authoritative, even if historical/scheduled sale rows exist.
 
-DIRECT CHAT AND ATTACHMENTS
+9. PRESENTATION AND RELEASE
 ---------------------------
-The Chat page lists current unblocked friends, unread totals and the most recent visible message. Selecting a friend
-loads up to the latest 100 visible messages and marks incoming messages read. Fetch polling refreshes the ordered
-server result about every three seconds; the client deduplicates by message ID before rendering.
-
-Messages are limited to 2,000 readable characters and sending is limited to one message every two seconds to avoid
-accidental flooding. Text is rendered with DOM text nodes. Authors can edit their own text, and edited messages show
-an `edited` label. Hiding affects only the current participant. Delete for everyone hard-deletes the message, both
-participants' state and its attachment even when the other participant already hid it; no tombstone is displayed.
-
-Each message may have one JPG, PNG, WebP, PDF or TXT attachment up to 5 MB. The server checks upload status, actual
-MIME type, extension and readable image content, then stores the file under a generated name in the denied private
-storage directory. Only the authenticated current conversation participants can use the download endpoint, and
-storage names or paths are never returned. Blocking or removing the friendship immediately disables chat actions
-and downloads. Administrators have no private-message reader.
-
-The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
-test data directory. The normal XAMPP control-panel startup was not verified because
-its existing InnoDB data file was not writable in this environment. No real database
-password is stored in the repository.
-
-COMMUNITY CENTER AND DISCUSSIONS
---------------------------------
-The Community Center and per-game hubs reuse the existing guide, review and screenshot records.
-Its game-filtered discussions, guides, screenshots and posts share one bounded page number; requests past
-the last populated page are clamped, and navigation never links beyond the valid range.
-Discussion topics use General, Help, Bug, Trading and Off-topic categories with escaped search and
-pagination. Authors may edit their own active topics and replies. Pin, lock and hide state remains
-administrator-owned; reply insertion locks and rechecks the topic, so a locked topic rejects replies
-even when a client bypasses the interface.
-
-Community posts contain up to 5,000 characters of escaped text and an optional validated JPG, PNG or
-WebP image up to 5 MB. Images receive generated names under uploads/community/, which is ignored by
-Git. Likes are unique per user/post. Reports support active reviews, guides, guide comments, topics,
-replies, posts and post comments, with one report per reporter and target. The public services do not
-query private chat messages or attachment metadata.
-
-ADMINISTRATION
---------------
-Every admin page and handler checks the current database-backed administrator session. Mutations use
-POST and CSRF protection. The user list exposes display name, Skadi ID, email, role, status and balance,
-but never login names, password hashes or private chat. The last active administrator cannot be demoted,
-suspended or blocked. Wallet adjustments require an exact positive/negative amount and reason; the user
-row, resulting balance, ledger entry, actor and audit record are written in one transaction, and a
-negative result rolls back. Moderation supports reviews, guides/comments, discussions/replies and
-community posts/comments. Hidden state is reflected by the canonical public queries; deleted content
-is retained for audit and cannot be restored. Reports require a resolution note. Order and wallet views
-are read-only and paginated.
-
-SESSION SECURITY
-----------------
-Sessions use cookies only, strict mode, HttpOnly and SameSite=Lax. The cookie is
-scoped to /Skadi/ and becomes Secure automatically when HTTPS is detected. Local
-HTTP development intentionally leaves Secure off so XAMPP can receive the cookie.
-For production, serve only over HTTPS, ensure the Secure flag is present, and use
-production PHP session storage/settings. Authenticated sessions expire after 30
-minutes of inactivity and refresh database role/status information on each request.
-
-DEVELOPMENT DATA
-----------------
-The dump contains twelve catalog games and two local seed accounts. Both accounts
-are marked to require a password change. See the local Phase 01 handoff for temporary
-seed credentials; never reuse them for a hosted installation.
+Use docs/PRESENTATION.md for the repeatable demonstration order and teacher Q&A.
+This commit passed independent coordinator verification and is approved for the
+v1.0-presentation tag. It has not been deployed. The Phase 16 implementation chat itself did
+not commit, push, deploy or create the tag; those release actions remain with the coordinator.
