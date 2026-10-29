@@ -40,5 +40,14 @@ try {
     throw $exception;
 }
 
+recordAdminAudit(
+    db(),
+    (int) currentUser()['id'],
+    $gameId === null ? 'game.created' : 'game.updated',
+    'game',
+    $savedGameId,
+    ($gameId === null ? 'Created' : 'Updated') . ' game: ' . $input['title']
+);
+
 addFlashMessage('success', $gameId === null ? 'Game created. You can now add its media.' : 'Game details saved.');
 redirectTo('admin/game-form.php?id=' . $savedGameId);

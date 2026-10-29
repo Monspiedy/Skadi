@@ -8,7 +8,7 @@ USE `skadi`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 DROP VIEW IF EXISTS `admin_content_report_queue`, `admin_catalog_overview`, `admin_user_overview`;
-DROP TABLE IF EXISTS `content_reports`, `community_comment_likes`, `community_comments`,
+DROP TABLE IF EXISTS `admin_audit_logs`, `content_reports`, `community_comment_likes`, `community_comments`,
     `community_post_likes`, `community_posts`, `discussion_replies`, `discussion_topics`,
     `discussion_categories`, `guide_comments`, `guide_favorites`, `guide_votes`, `guides`,
     `message_user_states`, `message_attachments`, `messages`, `conversations`, `user_blocks`,
@@ -47,6 +47,20 @@ CREATE TABLE `users` (
     CONSTRAINT `fk_users_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
     CONSTRAINT `chk_users_wallet_balance` CHECK (`wallet_balance` >= 0),
     CONSTRAINT `chk_users_password_flag` CHECK (`must_change_password` IN (0,1))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `admin_audit_logs` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `actor_user_id` BIGINT UNSIGNED NOT NULL,
+    `action_code` VARCHAR(80) NOT NULL,
+    `target_type` VARCHAR(50) NOT NULL,
+    `target_id` BIGINT UNSIGNED NOT NULL,
+    `details` VARCHAR(1000) NOT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_admin_audit_actor` (`actor_user_id`,`created_at`),
+    KEY `idx_admin_audit_target` (`target_type`,`target_id`,`created_at`),
+    CONSTRAINT `fk_admin_audit_actor` FOREIGN KEY (`actor_user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `user_profiles` (

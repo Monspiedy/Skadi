@@ -19,11 +19,7 @@ require SKADI_ROOT . '/includes/header.php';
         </div>
         <a class="btn btn-primary" href="<?= escape(baseUrl('admin/game-form.php')) ?>">Add game</a>
     </div>
-    <nav class="admin-subnav" aria-label="Administration sections">
-        <a aria-current="page" href="<?= escape(baseUrl('admin/games.php')) ?>">Games</a>
-        <a href="<?= escape(baseUrl('admin/genres.php')) ?>">Genres</a>
-        <a href="<?= escape(baseUrl('admin/featured.php')) ?>">Featured</a>
-    </nav>
+    <?php renderAdminNav('games'); ?>
 
     <?php if ($games === []): ?>
         <?php renderStatePanel('empty', 'No games yet', 'Create the first catalog game to begin.'); ?>

@@ -22,11 +22,7 @@ require SKADI_ROOT . '/includes/header.php';
 <section class="admin-shell" aria-labelledby="featured-heading">
     <p class="eyebrow">Catalog administration</p>
     <h1 id="featured-heading">Featured games</h1>
-    <nav class="admin-subnav" aria-label="Administration sections">
-        <a href="<?= escape(baseUrl('admin/games.php')) ?>">Games</a>
-        <a href="<?= escape(baseUrl('admin/genres.php')) ?>">Genres</a>
-        <a aria-current="page" href="<?= escape(baseUrl('admin/featured.php')) ?>">Featured</a>
-    </nav>
+    <?php renderAdminNav('featured'); ?>
     <p>Choose up to five published games. Their slot number controls storefront order.</p>
     <form class="admin-form featured-form" method="post" action="<?= escape(baseUrl('actions/admin/featured-save.php')) ?>" data-featured-form>
         <?= csrfInput() ?>

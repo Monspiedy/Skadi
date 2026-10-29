@@ -18,5 +18,6 @@ if ($error !== null) {
 }
 
 saveFeaturedSelection(db(), $gameIds, (int) currentUser()['id']);
+recordAdminAudit(db(), (int) currentUser()['id'], 'featured.updated', 'featured_games', 1, 'Saved ' . count($gameIds) . ' featured game(s).');
 addFlashMessage('success', count($gameIds) . ' featured game(s) saved in storefront order.');
 redirectTo('admin/featured.php');

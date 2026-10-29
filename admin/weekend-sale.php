@@ -9,6 +9,7 @@ requireAdmin();
 $connection = db();
 $countdown = weekendSaleCountdownState();
 $saleRows = loadWeekendSaleAudit($connection);
+$discountRows = loadLatestWeekendSaleDiscounts($connection);
 $pageTitle = 'Weekend sale administration';
 require SKADI_ROOT . '/includes/header.php';
 ?>
@@ -21,6 +22,7 @@ require SKADI_ROOT . '/includes/header.php';
         </div>
         <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('admin/')) ?>">Back to administration</a>
     </div>
+    <?php renderAdminNav('sale'); ?>
 
     <section class="admin-panel sale-regeneration-panel" aria-labelledby="regenerate-heading">
         <h2 id="regenerate-heading">Demonstration regeneration</h2>
@@ -77,6 +79,24 @@ require SKADI_ROOT . '/includes/header.php';
                     </tbody>
                 </table>
             </div>
+        <?php endif; ?>
+    </section>
+
+    <section class="admin-panel" aria-labelledby="sale-discounts-heading">
+        <h2 id="sale-discounts-heading">Latest generation discounts</h2>
+        <?php if ($discountRows === []): ?>
+            <?php renderStatePanel('empty', 'No discounts', 'No persisted sale discount set is available yet.'); ?>
+        <?php else: ?>
+            <div class="table-responsive"><table class="admin-table">
+                <thead><tr><th>Game</th><th>Base price</th><th>Discount</th><th>Generation</th><th>Status</th></tr></thead>
+                <tbody><?php foreach ($discountRows as $discount): ?><tr>
+                    <th><?= escape($discount['title']) ?></th>
+                    <td><?= escape(gamePriceLabel($discount['base_price'])) ?></td>
+                    <td><?= (int) $discount['discount_percent'] ?>%</td>
+                    <td>#<?= (int) $discount['generation_number'] ?></td>
+                    <td><?= escape(ucfirst($discount['status'])) ?></td>
+                </tr><?php endforeach; ?></tbody>
+            </table></div>
         <?php endif; ?>
     </section>
 </section>

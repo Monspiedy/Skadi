@@ -30,8 +30,19 @@ if (!is_array($media)) {
     redirectTo('admin/game-form.php?id=' . $gameId);
 }
 
-$delete = db()->prepare('DELETE FROM game_media WHERE id = :id AND game_id = :game_id');
-$delete->execute(['id' => $mediaId, 'game_id' => $gameId]);
+$connection = db();
+$connection->beginTransaction();
+try {
+    $delete = $connection->prepare('DELETE FROM game_media WHERE id = :id AND game_id = :game_id');
+    $delete->execute(['id' => $mediaId, 'game_id' => $gameId]);
+    recordAdminAudit($connection, (int) currentUser()['id'], 'media.deleted', 'game_media', $mediaId, 'Deleted ' . $media['media_type'] . ' from game ' . $gameId . '.');
+    $connection->commit();
+} catch (Throwable $exception) {
+    if ($connection->inTransaction()) {
+        $connection->rollBack();
+    }
+    throw $exception;
+}
 if (isManagedGameUploadPath($media['storage_path']) && !deleteManagedGameUpload($media['storage_path'])) {
     addFlashMessage('warning', 'The media record was deleted, but the uploaded file could not be removed. Check file permissions.');
 } else {

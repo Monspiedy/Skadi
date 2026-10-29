@@ -31,6 +31,8 @@ require_once SKADI_ROOT . '/includes/chat-service.php';
 require_once SKADI_ROOT . '/includes/guide-service.php';
 require_once SKADI_ROOT . '/includes/community-service.php';
 require_once SKADI_ROOT . '/includes/admin-catalog.php';
+require_once SKADI_ROOT . '/includes/admin-service.php';
+require_once SKADI_ROOT . '/includes/admin-nav.php';
 
 initializeErrorHandling($appConfig);
 

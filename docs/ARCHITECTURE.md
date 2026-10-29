@@ -182,6 +182,10 @@ Community:
 - `community_comment_likes`
 - `content_reports`
 
+Administration:
+
+- `admin_audit_logs`
+
 The complete definitions, constraints, seed strategy and ER-style relationship list are in `database/SCHEMA.md`. Avoid adding tables ad hoc in later phases without updating that document and `kanta.sql` together.
 
 ## Database responsibility split
@@ -243,6 +247,20 @@ The database enforces row-local values, foreign-key integrity, unique relationsh
   check and generated reporter/target unique key keep the audit queue valid and reject duplicates.
 - Public community queries select public display identity and active public records only. They never join
   private chat tables; private messages and attachment metadata remain confined to the chat service.
+
+## Implemented Phase 14 administration
+
+- `includes/admin-service.php` owns safe user search, final-active-admin protection, transactional wallet
+  adjustments, paginated commerce histories, moderation queues, report resolution and dashboard counts.
+- `includes/admin-nav.php` gives every `/admin/` page one shared navigation model. Catalog/media/featured
+  and weekend-sale tools remain in their focused existing services.
+- New admin mutations live under `actions/admin/`, require current database-backed administrator access,
+  POST and CSRF, and record the actor plus a non-sensitive summary in `admin_audit_logs`.
+- Wallet adjustment locks the target user, calculates in integer cents, rejects a negative result and writes
+  balance, append-only ledger and generic audit rows in one transaction.
+- Moderation uses an application-owned target map. Canonical content statuses control public visibility;
+  private conversation tables are not queried by any admin page or service.
+- `admin_user_overview`, `admin_catalog_overview` and `admin_content_report_queue` remain the safe read models.
 
 ## Maintainability
 

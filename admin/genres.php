@@ -36,11 +36,7 @@ require SKADI_ROOT . '/includes/header.php';
 <section class="admin-shell" aria-labelledby="genres-heading">
     <p class="eyebrow">Catalog administration</p>
     <h1 id="genres-heading">Genres</h1>
-    <nav class="admin-subnav" aria-label="Administration sections">
-        <a href="<?= escape(baseUrl('admin/games.php')) ?>">Games</a>
-        <a aria-current="page" href="<?= escape(baseUrl('admin/genres.php')) ?>">Genres</a>
-        <a href="<?= escape(baseUrl('admin/featured.php')) ?>">Featured</a>
-    </nav>
+    <?php renderAdminNav('genres'); ?>
     <div class="admin-two-column">
         <form class="admin-form media-admin-panel" method="post" action="<?= escape(baseUrl('actions/admin/genre-save.php')) ?>" novalidate>
             <?= csrfInput() ?>

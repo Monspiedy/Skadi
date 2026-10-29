@@ -17,6 +17,7 @@ if (($_POST['confirm_regeneration'] ?? '') !== 'yes') {
 
 try {
     $result = regenerateCurrentWeekendSale(db(), (int) currentUser()['id']);
+    recordAdminAudit(db(), (int) currentUser()['id'], 'sale.regenerated', 'weekly_sale', (int) $result['sale_id'], 'Created generation #' . $result['generation_number'] . ' with ' . $result['discount_count'] . ' discounts.');
     addFlashMessage(
         'success',
         'Weekend sale generation #' . $result['generation_number'] . ' created with '

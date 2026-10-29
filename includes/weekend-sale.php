@@ -285,6 +285,19 @@ function loadWeekendSaleAudit(PDO $connection, int $limit = 12): array
     )->fetchAll();
 }
 
+function loadLatestWeekendSaleDiscounts(PDO $connection): array
+{
+    return $connection->query(
+        "SELECT ws.id AS sale_id, ws.generation_number, ws.status, ws.starts_at, ws.ends_at,
+                g.title, g.base_price, wd.discount_percent
+         FROM weekly_sales ws
+         JOIN weekly_discounts wd ON wd.sale_id = ws.id
+         JOIN games g ON g.id = wd.game_id
+         WHERE ws.id = (SELECT id FROM weekly_sales ORDER BY starts_at DESC, generation_number DESC LIMIT 1)
+         ORDER BY g.title"
+    )->fetchAll();
+}
+
 function weekendSaleCountdownState(?DateTimeImmutable $now = null): array
 {
     $window = weekendSaleWindow($now);

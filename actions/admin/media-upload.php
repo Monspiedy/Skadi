@@ -115,6 +115,14 @@ try {
             ]);
         }
     }
+    recordAdminAudit(
+        $connection,
+        (int) currentUser()['id'],
+        'media.uploaded',
+        'game',
+        $gameId,
+        ($mediaType === 'cover' ? 'Uploaded cover.' : 'Uploaded ' . count($storedPaths) . ' screenshot(s).')
+    );
     $connection->commit();
 } catch (Throwable $exception) {
     if ($connection->inTransaction()) {

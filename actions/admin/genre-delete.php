@@ -20,6 +20,7 @@ if (!$result['deleted'] && $result['game_count'] > 0) {
 } elseif (!$result['deleted']) {
     addFlashMessage('warning', 'The genre no longer exists.');
 } else {
+    recordAdminAudit(db(), (int) currentUser()['id'], 'genre.deleted', 'genre', (int) $rawGenreId, 'Deleted unused genre.');
     addFlashMessage('success', 'Genre deleted.');
 }
 redirectTo('admin/genres.php');

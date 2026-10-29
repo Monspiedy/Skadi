@@ -3,7 +3,7 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 13 Community Center and discussions is complete. Registration, login, forced first-login
+Phase 14 administration and moderation is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
@@ -22,7 +22,9 @@ favorite and comment. The public Community Center now aggregates game-filtered d
 guides, screenshots and community posts. Each game has Overview, Discussions, Guides,
 Screenshots and Reviews tabs. Signed-in users can create and edit discussion content,
 publish text/image posts, like and comment, and report public content. Private direct
-messages never appear in these public feeds. Admin moderation UI remains Phase 14 scope.
+messages never appear in these public feeds. Administrators now have a consistent dashboard,
+safe account search/access controls, transactional wallet adjustments, paginated commerce history,
+public-content moderation, report resolution and weekend-sale inspection/regeneration.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -68,10 +70,14 @@ CURRENT PAGES
 - http://localhost/Skadi/wallet.php - authenticated balance and wallet ledger history
 - http://localhost/Skadi/orders.php - authenticated purchase history and price snapshots
 - http://localhost/Skadi/change-password.php - authenticated password change
-- http://localhost/Skadi/admin/ - admin-only catalog administration
+- http://localhost/Skadi/admin/ - admin-only dashboard and statistics
 - http://localhost/Skadi/admin/games.php - game, cover and screenshot management
 - http://localhost/Skadi/admin/genres.php - genre management
 - http://localhost/Skadi/admin/featured.php - ordered featured-game selection
+- http://localhost/Skadi/admin/users.php - safe account access and wallet adjustment controls
+- http://localhost/Skadi/admin/commerce.php - read-only order and wallet histories
+- http://localhost/Skadi/admin/moderation.php - public-content moderation queues
+- http://localhost/Skadi/admin/reports.php - public-content report queue and resolution notes
 - http://localhost/Skadi/admin/weekend-sale.php - sale generation audit and admin-only regeneration
 - http://localhost/Skadi/health.php - non-sensitive environment health check
 - /errors/403.php, /errors/404.php and /errors/500.php - shared error pages
@@ -186,6 +192,18 @@ WebP image up to 5 MB. Images receive generated names under uploads/community/, 
 Git. Likes are unique per user/post. Reports support active reviews, guides, guide comments, topics,
 replies, posts and post comments, with one report per reporter and target. The public services do not
 query private chat messages or attachment metadata.
+
+ADMINISTRATION
+--------------
+Every admin page and handler checks the current database-backed administrator session. Mutations use
+POST and CSRF protection. The user list exposes display name, Skadi ID, email, role, status and balance,
+but never login names, password hashes or private chat. The last active administrator cannot be demoted,
+suspended or blocked. Wallet adjustments require an exact positive/negative amount and reason; the user
+row, resulting balance, ledger entry, actor and audit record are written in one transaction, and a
+negative result rolls back. Moderation supports reviews, guides/comments, discussions/replies and
+community posts/comments. Hidden state is reflected by the canonical public queries; deleted content
+is retained for audit and cannot be restored. Reports require a resolution note. Order and wallet views
+are read-only and paginated.
 
 SESSION SECURITY
 ----------------

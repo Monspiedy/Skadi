@@ -34,6 +34,7 @@ try {
         addFlashMessage('error', 'Game not deleted. Remove or retain these references safely first: ' . implode(', ', $details) . '.');
         redirectTo('admin/games.php');
     }
+    recordAdminAudit($connection, (int) currentUser()['id'], 'game.deleted', 'game', $gameId, 'Deleted game: ' . $game['title']);
     $connection->commit();
 } catch (Throwable $exception) {
     if ($connection->inTransaction()) {

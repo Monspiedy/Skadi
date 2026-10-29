@@ -33,7 +33,7 @@ if ($errors !== []) {
 }
 
 try {
-    saveGenre(db(), $input, $genreId);
+    $savedGenreId = saveGenre(db(), $input, $genreId);
 } catch (PDOException $exception) {
     if ($exception->getCode() === '23000') {
         $_SESSION['admin_genre_form'] = $input;
@@ -46,6 +46,15 @@ try {
     }
     throw $exception;
 }
+
+recordAdminAudit(
+    db(),
+    (int) currentUser()['id'],
+    $genreId === null ? 'genre.created' : 'genre.updated',
+    'genre',
+    $savedGenreId,
+    ($genreId === null ? 'Created' : 'Updated') . ' genre: ' . $input['name']
+);
 
 addFlashMessage('success', $genreId === null ? 'Genre created.' : 'Genre updated.');
 redirectTo('admin/genres.php');

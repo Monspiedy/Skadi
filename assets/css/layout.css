@@ -842,18 +842,43 @@ section > h1 {
 }
 
 .admin-card-grid,
-.media-admin-grid {
+.media-admin-grid,
+.admin-stat-grid,
+.admin-user-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
 .admin-card,
-.media-admin-panel {
+.media-admin-panel,
+.admin-panel,
+.admin-stat-grid > div {
   padding: 1.25rem;
   border: 1px solid var(--sk-border);
   border-radius: 1rem;
   background: var(--sk-surface);
+}
+
+.admin-stat-grid > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-stat-grid strong {
+  color: var(--sk-accent);
+  font-size: 1.8rem;
+}
+
+.admin-user-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .admin-card {
@@ -931,6 +956,10 @@ section > h1 {
 .admin-form select,
 .admin-form textarea {
   width: 100%;
+}
+
+.admin-form input[type="checkbox"] {
+  width: auto;
 }
 
 .genre-checklist {
@@ -1527,6 +1556,8 @@ section > h1 {
 @media (max-width: 61.99rem) {
   .admin-card-grid,
   .media-admin-grid,
+  .admin-stat-grid,
+  .admin-user-grid,
   .admin-two-column {
     grid-template-columns: 1fr;
   }

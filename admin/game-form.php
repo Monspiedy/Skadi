@@ -38,6 +38,7 @@ require SKADI_ROOT . '/includes/header.php';
 <section class="admin-shell" aria-labelledby="game-form-heading">
     <p class="eyebrow">Catalog administration</p>
     <h1 id="game-form-heading"><?= $gameId === null ? 'Add game' : 'Edit game' ?></h1>
+    <?php renderAdminNav('games'); ?>
     <p><a href="<?= escape(baseUrl('admin/games.php')) ?>">← Back to games</a></p>
 
     <form class="admin-form" method="post" action="<?= escape(baseUrl('actions/admin/game-save.php')) ?>" novalidate>

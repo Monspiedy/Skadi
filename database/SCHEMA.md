@@ -14,6 +14,7 @@ Deleting a chat message for everyone means a real `DELETE` from `messages`. Casc
 
 - `roles`: Stable `user` and `admin` role names.
 - `users`: Authentication identity, public Skadi ID/display name, role, status, wallet balance and password-change flag. Login, email and Skadi ID are unique.
+- `admin_audit_logs`: Append-only administrator action records with actor, action, target and a non-sensitive summary.
 - `user_profiles`: One-to-one privacy, theme, avatar, biography, friend-request and presence preferences.
 
 ## Store, sales and media
@@ -102,6 +103,7 @@ games 1 --- * community_posts 1 --- * community_comments
 community_posts * --- * users through community_post_likes
 community_comments * --- * users through community_comment_likes
 users 1 --- * content_reports --- exactly one reportable public-content row
+users 1 --- * admin_audit_logs as acting administrator
 ```
 
 ## Deterministic seed data
