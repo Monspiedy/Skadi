@@ -29,6 +29,7 @@ require_once SKADI_ROOT . '/includes/uploads.php';
 require_once SKADI_ROOT . '/includes/social-service.php';
 require_once SKADI_ROOT . '/includes/chat-service.php';
 require_once SKADI_ROOT . '/includes/guide-service.php';
+require_once SKADI_ROOT . '/includes/community-service.php';
 require_once SKADI_ROOT . '/includes/admin-catalog.php';
 
 initializeErrorHandling($appConfig);

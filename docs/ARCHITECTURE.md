@@ -227,6 +227,23 @@ The database enforces row-local values, foreign-key integrity, unique relationsh
 - Vote and favorite uniqueness remains enforced by composite primary keys. Favorite toggles lock the
   published guide row in a transaction so simultaneous toggles cannot create duplicate state.
 
+## Implemented Phase 13 Community Center
+
+- `includes/community-service.php` owns public aggregation, discussion validation/search/pagination,
+  transaction-scoped locked-topic enforcement, community posts, unique likes/comments and reports.
+- `community.php` is the global game-filtered public dashboard. `game-community.php` provides the five
+  per-game tabs while calling the existing guide, review and game-media queries as canonical sources.
+- Global aggregation counts each filtered canonical source and uses the largest section page count as one
+  shared bound. The requested page is clamped once, then the same offset is applied to every section.
+- Discussion and post mutations live in `actions/`, require authentication, POST and CSRF, and accept
+  identifiers/content only. Pin, lock and hide state cannot be supplied through normal user handlers.
+- Community post images reuse the shared content-based upload validator with a 5 MB policy, generated
+  names and a narrow managed-path cleanup rule under `uploads/community/`.
+- Report target table/column names come from a fixed application map. The schema's exactly-one-target
+  check and generated reporter/target unique key keep the audit queue valid and reject duplicates.
+- Public community queries select public display identity and active public records only. They never join
+  private chat tables; private messages and attachment metadata remain confined to the chat service.
+
 ## Maintainability
 
 The project avoids a single global functions file growing without limit. Helpers will be grouped by responsibility, for example authentication, validation, uploads, pricing, pagination and flash messages. Each phase should reuse these modules instead of duplicating logic.

@@ -216,6 +216,7 @@ require SKADI_ROOT . '/includes/header.php';
                                 <?php else: ?>
                                     <p class="form-note">Rating only.</p>
                                 <?php endif; ?>
+                                <?php renderReportForm('review', (int) $review['id'], 'game.php?id=' . $gameId . '#reviews'); ?>
                             </article>
                         <?php endforeach; ?>
                     </div>
@@ -232,9 +233,9 @@ require SKADI_ROOT . '/includes/header.php';
             </section>
             <section>
                 <p class="eyebrow">Community</p>
-                <h2>Player guides</h2>
-                <p>Read player-written walkthroughs, strategies and builds for this game.</p>
-                <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('guides.php?game=' . (int) $game['id'])) ?>">Browse guides</a>
+                <h2>Community Hub</h2>
+                <p>Browse this game's discussions, guides, screenshots and reviews.</p>
+                <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('game-community.php?id=' . (int) $game['id'])) ?>">Open Community Hub</a>
                 <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
                     <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('guide-edit.php?game=' . (int) $game['id'])) ?>">Write a guide</a>
                 <?php endif; ?>

@@ -23,9 +23,9 @@ The primary date is aggressive. Core course requirements must remain more import
 | 08 | Nov 2 | Library, wishlist, reviews and ratings | Complete |
 | 09 | Nov 3 | Weekend discounts and countdown | Complete |
 | 10 | Nov 4 | Profiles, privacy, Skadi ID, friends and blocking | Complete |
-| 11 | Nov 5-6 | Direct chat, edit/delete, unread state and attachments | Not started |
-| 12 | Nov 7 | Player guides, voting, favorites and comments | Not started |
-| 13 | Nov 8 | Community Center, discussions and community posts | Not started |
+| 11 | Nov 5-6 | Direct chat, edit/delete, unread state and attachments | Complete |
+| 12 | Nov 7 | Player guides, voting, favorites and comments | Complete |
+| 13 | Nov 8 | Community Center, discussions and community posts | Complete |
 | 14 | Nov 9 | Admin panel and moderation | Not started |
 | 15 | Nov 10 | Integration, security review and fixes | Not started |
 | 16 | Nov 11 | Final seed data, documentation and presentation rehearsal | Not started |

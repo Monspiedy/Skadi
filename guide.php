@@ -52,6 +52,7 @@ require SKADI_ROOT . '/includes/header.php';
     </header>
 
     <div class="guide-body"><?= renderGuideBody($guide['body_source']) ?></div>
+    <?php if ($guide['status'] === 'published'): ?><?php renderReportForm('guide', $guideId, 'guide.php?id=' . $guideId); ?><?php endif; ?>
 
     <?php if ($guide['status'] === 'published'): ?>
         <section class="guide-reactions" aria-labelledby="reactions-heading">
@@ -99,6 +100,7 @@ require SKADI_ROOT . '/includes/header.php';
                                 <button class="btn btn-sm btn-outline-danger" type="submit">Delete comment</button>
                             </form>
                         <?php endif; ?>
+                        <?php renderReportForm('guide_comment', (int) $comment['id'], 'guide.php?id=' . $guideId); ?>
                     </article>
                 <?php endforeach; ?>
                 <?php if ($comments === []): ?><p class="form-note">No comments yet.</p><?php endif; ?>

@@ -3,7 +3,7 @@ SKADI - INSTALLATION AND USER GUIDE
 
 STATUS
 ------
-Phase 12 player guides is complete. Registration, login, forced first-login
+Phase 13 Community Center and discussions is complete. Registration, login, forced first-login
 password change, protected account/admin access and CSRF-protected logout remain
 available. The responsive shared shell includes local Bootstrap 5.3.8 plus Skadi,
 Dark and Light themes. The store now supports featured games, title search, genre and
@@ -18,7 +18,11 @@ profiles use immutable Skadi IDs; users can search for people, manage friend req
 one shared privacy rule protects libraries, reviews, activity and friend lists. Accepted unblocked friends can
 exchange direct messages and private validated attachments with asynchronous unread/read updates.
 Any signed-in user can now draft or publish a safe BBCode guide for an active game, vote,
-favorite and comment. Admin moderation UI is not part of this phase.
+favorite and comment. The public Community Center now aggregates game-filtered discussions,
+guides, screenshots and community posts. Each game has Overview, Discussions, Guides,
+Screenshots and Reviews tabs. Signed-in users can create and edit discussion content,
+publish text/image posts, like and comment, and report public content. Private direct
+messages never appear in these public feeds. Admin moderation UI remains Phase 14 scope.
 
 PLANNED ENVIRONMENT
 -------------------
@@ -41,7 +45,12 @@ CURRENT PAGES
 - http://localhost/Skadi/ - home page
 - http://localhost/Skadi/store.php - searchable and filterable game catalog
 - http://localhost/Skadi/game.php?id=1 - game detail, owner review and active review list
-- http://localhost/Skadi/community.php - links to implemented guides and people features
+- http://localhost/Skadi/community.php - game-filtered public Community Center
+- http://localhost/Skadi/game-community.php?id=1 - per-game community hub and tabs
+- http://localhost/Skadi/discussions.php - searchable, categorized and paginated discussions
+- http://localhost/Skadi/discussion.php?id=1 - topic, replies, editing and reporting
+- http://localhost/Skadi/posts.php - paginated public community posts
+- http://localhost/Skadi/community-post.php?id=1 - post likes, comments and reporting
 - http://localhost/Skadi/guides.php - paginated global/per-game guide lists and sorts
 - http://localhost/Skadi/guide.php?id=1 - public guide, helpful score, favorites and comments
 - http://localhost/Skadi/guide-edit.php - authenticated draft/publish editor with safe preview
@@ -161,6 +170,22 @@ The SQL dump was imported twice successfully with MariaDB 10.4.32 in an isolated
 test data directory. The normal XAMPP control-panel startup was not verified because
 its existing InnoDB data file was not writable in this environment. No real database
 password is stored in the repository.
+
+COMMUNITY CENTER AND DISCUSSIONS
+--------------------------------
+The Community Center and per-game hubs reuse the existing guide, review and screenshot records.
+Its game-filtered discussions, guides, screenshots and posts share one bounded page number; requests past
+the last populated page are clamped, and navigation never links beyond the valid range.
+Discussion topics use General, Help, Bug, Trading and Off-topic categories with escaped search and
+pagination. Authors may edit their own active topics and replies. Pin, lock and hide state remains
+administrator-owned; reply insertion locks and rechecks the topic, so a locked topic rejects replies
+even when a client bypasses the interface.
+
+Community posts contain up to 5,000 characters of escaped text and an optional validated JPG, PNG or
+WebP image up to 5 MB. Images receive generated names under uploads/community/, which is ignored by
+Git. Likes are unique per user/post. Reports support active reviews, guides, guide comments, topics,
+replies, posts and post comments, with one report per reporter and target. The public services do not
+query private chat messages or attachment metadata.
 
 SESSION SECURITY
 ----------------

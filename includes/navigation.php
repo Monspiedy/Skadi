@@ -36,9 +36,9 @@ function navigationClass(bool $isActive): string
                             <?= in_array($currentScript, ['store.php', 'game.php'], true) ? 'aria-current="page"' : '' ?>>Store</a>
                     </li>
                     <li class="nav-item">
-                        <a class="<?= navigationClass(in_array($currentScript, ['community.php', 'guides.php', 'guide.php', 'guide-edit.php', 'people.php', 'profile.php', 'friends.php', 'chat.php'], true)) ?>"
+                        <a class="<?= navigationClass(in_array($currentScript, ['community.php', 'game-community.php', 'discussions.php', 'discussion.php', 'topic-edit.php', 'posts.php', 'community-post.php', 'post-edit.php', 'guides.php', 'guide.php', 'guide-edit.php', 'people.php', 'profile.php', 'friends.php', 'chat.php'], true)) ?>"
                             href="<?= escape(baseUrl('community.php')) ?>"
-                            <?= in_array($currentScript, ['community.php', 'guides.php', 'guide.php', 'guide-edit.php', 'people.php', 'profile.php', 'friends.php', 'chat.php'], true) ? 'aria-current="page"' : '' ?>>Community</a>
+                            <?= in_array($currentScript, ['community.php', 'game-community.php', 'discussions.php', 'discussion.php', 'topic-edit.php', 'posts.php', 'community-post.php', 'post-edit.php', 'guides.php', 'guide.php', 'guide-edit.php', 'people.php', 'profile.php', 'friends.php', 'chat.php'], true) ? 'aria-current="page"' : '' ?>>Community</a>
                     </li>
                     <?php if ($navigationUser !== null && empty($navigationUser['must_change_password'])): ?>
                         <li class="nav-item">

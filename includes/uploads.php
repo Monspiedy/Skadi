@@ -37,6 +37,14 @@ function imageUploadPolicy(string $context): array
             'maximum_width' => 4000,
             'maximum_height' => 4000,
         ],
+        'community_image' => [
+            'directory' => 'uploads/community',
+            'maximum_bytes' => 5 * 1024 * 1024,
+            'minimum_width' => 320,
+            'minimum_height' => 180,
+            'maximum_width' => 5000,
+            'maximum_height' => 5000,
+        ],
     ];
 
     if (!isset($policies[$context])) {
@@ -242,6 +250,20 @@ function isManagedGuideUploadPath(string $storagePath): bool
 function deleteManagedGuideUpload(string $storagePath): bool
 {
     if (!isManagedGuideUploadPath($storagePath)) {
+        return false;
+    }
+    $absolutePath = SKADI_ROOT . '/' . str_replace('/', DIRECTORY_SEPARATOR, $storagePath);
+    return !is_file($absolutePath) || unlink($absolutePath);
+}
+
+function isManagedCommunityUploadPath(string $storagePath): bool
+{
+    return preg_match('#\Auploads/community/[a-f0-9]{32}\.(?:jpg|png|webp)\z#', $storagePath) === 1;
+}
+
+function deleteManagedCommunityUpload(string $storagePath): bool
+{
+    if (!isManagedCommunityUploadPath($storagePath)) {
         return false;
     }
     $absolutePath = SKADI_ROOT . '/' . str_replace('/', DIRECTORY_SEPARATOR, $storagePath);
