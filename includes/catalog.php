@@ -159,15 +159,19 @@ function countCatalogGames(PDO $connection, array $filters): int
     return (int) $statement->fetchColumn();
 }
 
-function loadCatalogGames(PDO $connection, array $filters, int $page): array
+function loadCatalogGames(PDO $connection, array $filters, int $page, ?int $viewerUserId = null): array
 {
     $where = catalogWhere($filters);
     $offset = ($page - 1) * CATALOG_PAGE_SIZE;
+    $viewerUserId = $viewerUserId ?? 0;
     $sql = 'SELECT g.id, g.slug, g.title, g.short_description, g.release_date, g.base_price,
                    cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
                    COALESCE(review_stats.review_count, 0) AS review_count,
                    review_stats.average_rating,
-                   COALESCE(owner_stats.owner_count, 0) AS owner_count
+                   COALESCE(owner_stats.owner_count, 0) AS owner_count,
+                   CASE WHEN viewer_library.user_id IS NULL THEN 0 ELSE 1 END AS is_owned,
+                   CASE WHEN viewer_cart.user_id IS NULL THEN 0 ELSE 1 END AS is_in_cart,
+                   CASE WHEN viewer_wishlist.user_id IS NULL THEN 0 ELSE 1 END AS is_wishlisted
             FROM games g
             LEFT JOIN game_media cover
                 ON cover.game_id = g.id AND cover.media_type = \'cover\' AND cover.sort_order = 0
@@ -179,12 +183,22 @@ function loadCatalogGames(PDO $connection, array $filters, int $page): array
                 SELECT game_id, COUNT(*) AS owner_count
                 FROM library_items WHERE removed_at IS NULL GROUP BY game_id
             ) owner_stats ON owner_stats.game_id = g.id
+            LEFT JOIN library_items viewer_library
+                ON viewer_library.game_id = g.id AND viewer_library.user_id = :library_user_id
+                AND viewer_library.removed_at IS NULL
+            LEFT JOIN cart_items viewer_cart
+                ON viewer_cart.game_id = g.id AND viewer_cart.user_id = :cart_user_id
+            LEFT JOIN wishlist_items viewer_wishlist
+                ON viewer_wishlist.game_id = g.id AND viewer_wishlist.user_id = :wishlist_user_id
             WHERE ' . $where['sql'] . '
             ORDER BY ' . catalogSortExpression($filters['sort']) . '
             LIMIT :page_size OFFSET :page_offset';
 
     $statement = $connection->prepare($sql);
     bindCatalogParameters($statement, $where['parameters']);
+    $statement->bindValue(':library_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->bindValue(':cart_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->bindValue(':wishlist_user_id', $viewerUserId, PDO::PARAM_INT);
     $statement->bindValue(':page_size', CATALOG_PAGE_SIZE, PDO::PARAM_INT);
     $statement->bindValue(':page_offset', $offset, PDO::PARAM_INT);
     $statement->execute();
@@ -193,13 +207,16 @@ function loadCatalogGames(PDO $connection, array $filters, int $page): array
     return attachGenresToGames($connection, $games);
 }
 
-function loadFeaturedGames(PDO $connection): array
+function loadFeaturedGames(PDO $connection, ?int $viewerUserId = null): array
 {
-    $statement = $connection->query(
+    $statement = $connection->prepare(
         "SELECT g.id, g.slug, g.title, g.short_description, g.release_date, g.base_price,
                 cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
                 COALESCE(review_stats.review_count, 0) AS review_count,
-                review_stats.average_rating, COALESCE(owner_stats.owner_count, 0) AS owner_count
+                review_stats.average_rating, COALESCE(owner_stats.owner_count, 0) AS owner_count,
+                CASE WHEN viewer_library.user_id IS NULL THEN 0 ELSE 1 END AS is_owned,
+                CASE WHEN viewer_cart.user_id IS NULL THEN 0 ELSE 1 END AS is_in_cart,
+                CASE WHEN viewer_wishlist.user_id IS NULL THEN 0 ELSE 1 END AS is_wishlisted
          FROM featured_games fg
          INNER JOIN games g ON g.id = fg.game_id AND g.status = 'published'
          LEFT JOIN game_media cover
@@ -212,11 +229,87 @@ function loadFeaturedGames(PDO $connection): array
              SELECT game_id, COUNT(*) AS owner_count
              FROM library_items WHERE removed_at IS NULL GROUP BY game_id
          ) owner_stats ON owner_stats.game_id = g.id
+         LEFT JOIN library_items viewer_library
+             ON viewer_library.game_id = g.id AND viewer_library.user_id = :library_user_id
+             AND viewer_library.removed_at IS NULL
+         LEFT JOIN cart_items viewer_cart
+             ON viewer_cart.game_id = g.id AND viewer_cart.user_id = :cart_user_id
+         LEFT JOIN wishlist_items viewer_wishlist
+             ON viewer_wishlist.game_id = g.id AND viewer_wishlist.user_id = :wishlist_user_id
          ORDER BY fg.position
          LIMIT 5"
     );
+    $viewerUserId = $viewerUserId ?? 0;
+    $statement->bindValue(':library_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->bindValue(':cart_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->bindValue(':wishlist_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->execute();
 
     return attachGenresToGames($connection, $statement->fetchAll());
+}
+
+function loadHomeStorefrontGames(PDO $connection, ?int $viewerUserId = null): array
+{
+    // One bounded query supplies every home shelf, including viewer state without per-card lookups.
+    $statement = $connection->prepare(
+        "SELECT g.id, g.slug, g.title, g.short_description, g.release_date, g.base_price,
+                cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
+                fg.position AS featured_position,
+                COALESCE(review_stats.review_count, 0) AS review_count,
+                review_stats.average_rating, COALESCE(owner_stats.owner_count, 0) AS owner_count,
+                CASE WHEN viewer_library.user_id IS NULL THEN 0 ELSE 1 END AS is_owned,
+                CASE WHEN viewer_cart.user_id IS NULL THEN 0 ELSE 1 END AS is_in_cart,
+                CASE WHEN viewer_wishlist.user_id IS NULL THEN 0 ELSE 1 END AS is_wishlisted
+         FROM games g
+         LEFT JOIN featured_games fg ON fg.game_id = g.id
+         LEFT JOIN game_media cover
+             ON cover.game_id = g.id AND cover.media_type = 'cover' AND cover.sort_order = 0
+         LEFT JOIN (
+             SELECT game_id, COUNT(*) AS review_count, ROUND(AVG(rating), 1) AS average_rating
+             FROM reviews WHERE status = 'active' GROUP BY game_id
+         ) review_stats ON review_stats.game_id = g.id
+         LEFT JOIN (
+             SELECT game_id, COUNT(*) AS owner_count
+             FROM library_items WHERE removed_at IS NULL GROUP BY game_id
+         ) owner_stats ON owner_stats.game_id = g.id
+         LEFT JOIN library_items viewer_library
+             ON viewer_library.game_id = g.id AND viewer_library.user_id = :library_user_id
+             AND viewer_library.removed_at IS NULL
+         LEFT JOIN cart_items viewer_cart
+             ON viewer_cart.game_id = g.id AND viewer_cart.user_id = :cart_user_id
+         LEFT JOIN wishlist_items viewer_wishlist
+             ON viewer_wishlist.game_id = g.id AND viewer_wishlist.user_id = :wishlist_user_id
+         WHERE g.status = 'published'
+         ORDER BY CASE WHEN fg.position IS NULL THEN 1 ELSE 0 END, fg.position, g.title
+         LIMIT 24"
+    );
+    $viewerUserId = $viewerUserId ?? 0;
+    $statement->bindValue(':library_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->bindValue(':cart_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->bindValue(':wishlist_user_id', $viewerUserId, PDO::PARAM_INT);
+    $statement->execute();
+
+    return attachGenresToGames($connection, $statement->fetchAll());
+}
+
+function takeUniqueStorefrontGames(array $games, array &$usedGameIds, int $limit): array
+{
+    $selected = [];
+
+    foreach ($games as $game) {
+        $gameId = (int) $game['id'];
+        if (isset($usedGameIds[$gameId])) {
+            continue;
+        }
+
+        $usedGameIds[$gameId] = true;
+        $selected[] = $game;
+        if (count($selected) === $limit) {
+            break;
+        }
+    }
+
+    return $selected;
 }
 
 function attachGenresToGames(PDO $connection, array $games): array

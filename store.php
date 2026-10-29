@@ -5,6 +5,7 @@ declare(strict_types=1);
 require __DIR__ . '/config/bootstrap.php';
 
 $connection = db();
+$viewerUserId = isAuthenticated() ? (int) currentUser()['id'] : null;
 $genres = loadCatalogGenres($connection);
 $filters = parseCatalogFilters($_GET, $genres);
 $totalGames = countCatalogGames($connection, $filters);
@@ -15,8 +16,10 @@ if ($filters['page'] > $totalPages) {
     $filters['warnings'][] = 'That page was outside the catalog, so the last available page is shown.';
 }
 
-$featuredGames = loadFeaturedGames($connection);
-$catalogGames = $totalGames > 0 ? loadCatalogGames($connection, $filters, $filters['page']) : [];
+$featuredGames = loadFeaturedGames($connection, $viewerUserId);
+$catalogGames = $totalGames > 0
+    ? loadCatalogGames($connection, $filters, $filters['page'], $viewerUserId)
+    : [];
 $priceRows = loadCurrentPriceRows(
     $connection,
     array_merge(array_column($featuredGames, 'id'), array_column($catalogGames, 'id'))
@@ -36,76 +39,6 @@ unset($catalogGame);
 $firstResult = $totalGames === 0 ? 0 : (($filters['page'] - 1) * CATALOG_PAGE_SIZE) + 1;
 $lastResult = min($filters['page'] * CATALOG_PAGE_SIZE, $totalGames);
 $saleCountdown = weekendSaleCountdownState();
-
-function renderGameArtwork(array $game, string $className = ''): void
-{
-    $coverUrl = safeGameMediaUrl($game['cover_path'] ?? null);
-    if ($coverUrl !== null) {
-        ?>
-        <img class="game-artwork <?= escape($className) ?>" src="<?= escape($coverUrl) ?>"
-            alt="<?= escape($game['cover_alt'] ?: $game['title'] . ' cover') ?>">
-        <?php
-        return;
-    }
-    ?>
-    <div class="game-artwork game-artwork-placeholder <?= escape($className) ?>" role="img"
-        aria-label="Original placeholder cover for <?= escape($game['title']) ?>">
-        <span aria-hidden="true"><?= escape(mb_strtoupper(mb_substr($game['title'], 0, 2))) ?></span>
-        <small><?= escape($game['title']) ?></small>
-    </div>
-    <?php
-}
-
-function renderCatalogCard(array $game, bool $featured = false): void
-{
-    ?>
-    <article class="game-card<?= $featured ? ' game-card-featured' : '' ?>">
-        <a class="game-card-art" href="<?= escape(baseUrl('game.php?id=' . (int) $game['id'])) ?>">
-            <?php renderGameArtwork($game); ?>
-        </a>
-        <div class="game-card-body">
-            <div class="game-card-heading">
-                <h3><a href="<?= escape(baseUrl('game.php?id=' . (int) $game['id'])) ?>"><?= escape($game['title']) ?></a></h3>
-                <strong class="price-tag<?= moneyToCents($game['current_price']) === 0 ? ' price-free' : '' ?>">
-                    <?= escape(commercePriceLabel($game['current_price'])) ?>
-                </strong>
-            </div>
-            <p><?= escape($game['short_description']) ?></p>
-            <?php if ($game['genres'] !== []): ?>
-                <ul class="genre-list" aria-label="Genres">
-                    <?php foreach ($game['genres'] as $genre): ?>
-                        <li><a href="<?= escape(catalogQueryUrl([
-                            'search' => '', 'genre' => $genre['slug'], 'price' => 'all', 'sort' => 'popularity'
-                        ], 1)) ?>"><?= escape($genre['name']) ?></a></li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
-            <p class="game-card-meta"><?= escape(gameRatingLabel($game)) ?></p>
-            <?php if ((int) ($game['discount_percent'] ?? 0) > 0): ?>
-                <p class="game-card-meta"><?= escape((int) $game['discount_percent']) ?>% off
-                    <span class="text-decoration-line-through"><?= escape(commercePriceLabel($game['base_price'])) ?></span>
-                </p>
-            <?php endif; ?>
-            <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
-                <div class="game-purchase-actions">
-                    <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
-                        <?= csrfInput() ?>
-                        <input type="hidden" name="game_id" value="<?= escape((int) $game['id']) ?>">
-                        <button class="btn btn-sm btn-primary" type="submit">Add to cart</button>
-                    </form>
-                    <form method="post" action="<?= escape(baseUrl('actions/wishlist-add.php')) ?>">
-                        <?= csrfInput() ?>
-                        <input type="hidden" name="game_id" value="<?= escape((int) $game['id']) ?>">
-                        <button class="btn btn-sm btn-outline-secondary" type="submit">Wishlist</button>
-                    </form>
-                </div>
-            <?php else: ?>
-                <a class="btn btn-sm btn-outline-secondary" href="<?= escape(baseUrl('login.php')) ?>">Sign in to purchase</a>
-            <?php endif; ?>
-        </div>
-    </article>
-    <?php
-}
 
 $pageTitle = 'Store';
 $pageScripts = ['assets/js/sale-countdown.js'];
@@ -138,7 +71,7 @@ require SKADI_ROOT . '/includes/header.php';
         </div>
         <div class="featured-grid">
             <?php foreach ($featuredGames as $game): ?>
-                <?php renderCatalogCard($game, true); ?>
+                <?php renderStorefrontCard($game, 'featured'); ?>
             <?php endforeach; ?>
         </div>
     </section>
@@ -207,7 +140,7 @@ require SKADI_ROOT . '/includes/header.php';
     <?php else: ?>
         <div class="catalog-grid">
             <?php foreach ($catalogGames as $game): ?>
-                <?php renderCatalogCard($game); ?>
+                <?php renderStorefrontCard($game); ?>
             <?php endforeach; ?>
         </div>
 

@@ -335,9 +335,132 @@ section > h1 {
 }
 
 /* Phase 05 catalog and game details. */
+.home-featured {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--sk-border);
+  border-radius: 1.4rem;
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--sk-surface) 94%, transparent), var(--sk-surface-raised));
+  box-shadow: var(--sk-shadow);
+}
+
+.home-featured-art {
+  display: block;
+  width: min(100%, 24rem);
+  justify-self: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-featured-cover {
+  aspect-ratio: 2 / 3;
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  box-shadow: 0 1.4rem 3rem rgb(0 0 0 / 28%);
+}
+
+.home-featured-content {
+  display: grid;
+  min-width: 0;
+  gap: 1rem;
+}
+
+.home-featured-content h1 {
+  margin: 0;
+  color: var(--sk-text);
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  line-height: 0.96;
+  overflow-wrap: anywhere;
+}
+
+.home-featured-content p,
+.home-featured-meta > span,
+.home-shelf-description {
+  color: var(--sk-muted);
+}
+
+.home-featured-lead {
+  max-width: 42rem;
+  margin: 0;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+}
+
+.home-featured-meta,
+.home-featured-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: center;
+}
+
+.home-sale-banner {
+  margin-block: clamp(1.25rem, 3vw, 2rem);
+}
+
+.home-sale-banner > a,
+.home-shelf-heading > a,
+.game-details-link {
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.home-discovery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.home-shelf {
+  min-width: 0;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--sk-surface) 92%, transparent);
+}
+
+.home-shelf-heading {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+  justify-content: space-between;
+}
+
+.home-shelf-heading h2,
+.home-shelf-heading p,
+.home-shelf-description {
+  margin: 0;
+}
+
+.home-shelf-heading h2 {
+  color: var(--sk-text);
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.home-shelf-heading > a {
+  flex: 0 0 auto;
+  font-size: 0.86rem;
+}
+
+.home-shelf-description {
+  margin-block: 0.7rem 1rem;
+  font-size: 0.9rem;
+}
+
+.home-shelf-games {
+  display: grid;
+  gap: 0.75rem;
+}
+
 .store-intro {
   max-width: 50rem;
-  margin-bottom: clamp(3rem, 7vw, 5rem);
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
 }
 
 .store-intro p:last-child,
@@ -375,7 +498,7 @@ section > h1 {
 
 .featured-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
   gap: 1rem;
 }
 
@@ -386,12 +509,27 @@ section > h1 {
 }
 
 .game-card {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--sk-border);
   border-radius: 1rem;
   background: var(--sk-surface);
   box-shadow: 0 0.5rem 1.8rem rgb(0 0 0 / 8%);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.game-card:hover,
+.game-card:focus-within {
+  border-color: var(--sk-accent);
+  box-shadow: 0 0.9rem 2.2rem color-mix(in srgb, var(--sk-accent) 14%, transparent);
+  transform: translateY(-0.18rem);
+}
+
+.game-card-media {
+  position: relative;
 }
 
 .game-card-art {
@@ -403,7 +541,7 @@ section > h1 {
 .game-artwork {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 2 / 3;
   object-fit: cover;
 }
 
@@ -448,7 +586,9 @@ section > h1 {
 
 .game-card-body {
   display: grid;
+  flex: 1;
   gap: 0.85rem;
+  align-content: start;
   padding: 1.15rem;
 }
 
@@ -461,7 +601,8 @@ section > h1 {
 
 .game-card h3 {
   color: var(--sk-text);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  line-height: 1.2;
 }
 
 .game-card h3 a {
@@ -473,9 +614,47 @@ section > h1 {
   color: var(--sk-accent-strong);
 }
 
-.price-tag {
+.store-price {
+  display: flex;
   flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.45rem;
+  align-items: center;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+
+.discount-badge,
+.game-state-badges li {
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}
+
+.discount-badge {
+  padding: 0.25rem 0.48rem;
+  background: var(--sk-success);
+  color: var(--sk-accent-ink);
+}
+
+.base-price {
+  color: var(--sk-muted);
+  font-size: 0.78rem;
+  text-decoration: line-through;
+}
+
+.current-price {
   color: var(--sk-text);
+  font-size: 1rem;
+}
+
+.store-price-hero {
+  justify-content: flex-start;
+}
+
+.store-price-hero .current-price {
+  font-size: clamp(1.35rem, 3vw, 2rem);
 }
 
 .price-free {
@@ -507,6 +686,49 @@ section > h1 {
   font-size: 0.85rem;
 }
 
+.game-card-description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.game-state-badges {
+  display: flex;
+  position: absolute;
+  z-index: 2;
+  top: 0.65rem;
+  left: 0.65rem;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.game-state-badges li {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--sk-accent) 70%, var(--sk-border));
+  background: color-mix(in srgb, var(--sk-bg-deep) 90%, transparent);
+  color: var(--sk-accent-strong);
+  box-shadow: 0 0.2rem 0.8rem rgb(0 0 0 / 28%);
+}
+
+.home-featured-content > .game-state-badges {
+  position: static;
+}
+
+.game-card-actions {
+  display: grid;
+  gap: 0.65rem;
+  align-self: end;
+  margin-top: auto;
+}
+
+.game-details-link {
+  font-size: 0.86rem;
+}
+
 .game-card-featured .game-card-body {
   padding: 0.9rem;
 }
@@ -515,8 +737,48 @@ section > h1 {
   display: grid;
 }
 
-.game-card-featured .game-card-body > p:not(.game-card-meta),
-.game-card-featured .genre-list {
+.game-card-featured .game-card-description {
+  display: none;
+}
+
+.game-card-featured .genre-list li:nth-child(n + 3) {
+  display: none;
+}
+
+.game-card-featured .game-purchase-actions {
+  display: grid;
+}
+
+.game-card-compact {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  background: var(--sk-surface-raised);
+}
+
+.game-card-compact .game-artwork {
+  height: 100%;
+  min-height: 10.5rem;
+}
+
+.game-card-compact .game-card-body {
+  gap: 0.55rem;
+  padding: 0.85rem;
+}
+
+.game-card-compact .game-card-heading {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.game-card-compact .store-price {
+  justify-content: flex-start;
+}
+
+.game-card-compact .game-card-description {
+  -webkit-line-clamp: 2;
+}
+
+.game-card-compact .genre-list li:nth-child(n + 3) {
   display: none;
 }
 
@@ -788,6 +1050,10 @@ section > h1 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .home-discovery-grid {
+    grid-template-columns: 1fr;
+  }
+
   .catalog-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -832,10 +1098,51 @@ section > h1 {
   .featured-grid,
   .catalog-grid,
   .catalog-filters,
+  .home-featured,
   .game-detail-hero,
   .game-facts,
   .screenshot-grid {
     grid-template-columns: 1fr;
+  }
+
+  .home-featured {
+    gap: 1.5rem;
+    padding: 0.9rem;
+  }
+
+  .home-featured-art {
+    width: min(72vw, 18rem);
+  }
+
+  .home-featured-content h1 {
+    font-size: clamp(2.25rem, 14vw, 3.7rem);
+  }
+
+  .home-featured-actions,
+  .home-featured-actions .btn {
+    width: 100%;
+  }
+
+  .home-shelf-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .game-card-compact {
+    grid-template-columns: 5.75rem minmax(0, 1fr);
+  }
+
+  .game-card-compact .game-card-description,
+  .game-card-compact .genre-list {
+    display: none;
+  }
+
+  .game-card-heading {
+    display: grid;
+  }
+
+  .store-price {
+    justify-content: flex-start;
   }
 
   .filter-search,
