@@ -20,6 +20,7 @@ $themeColor = match ($activeTheme) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= escape($pageTitle) ?> | <?= escape((string) appConfig('name')) ?></title>
     <meta name="theme-color" content="<?= escape($themeColor) ?>">
+    <link rel="icon" href="<?= escape(baseUrl('assets/images/favicon.svg')) ?>" type="image/svg+xml">
     <?php if ($isSignedIn): ?>
         <meta name="csrf-token" content="<?= escape(csrfToken()) ?>">
     <?php endif; ?>

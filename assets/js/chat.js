@@ -16,6 +16,7 @@
   let activeUserId = null;
   let conversations = [];
   let polling = false;
+  let lastRenderedMessageId = null;
 
   const jsonRequest = async (url, options = {}) => {
     const response = await fetch(url, { credentials: 'same-origin', ...options });
@@ -86,6 +87,10 @@
   };
 
   const renderMessages = (messages) => {
+    const newestMessageId = messages.length > 0 ? messages[messages.length - 1].id : null;
+    const previousScrollTop = messageList.scrollTop;
+    const shouldFollowLatest = messageList.scrollHeight - messageList.scrollTop - messageList.clientHeight < 80
+      || newestMessageId !== lastRenderedMessageId;
     messageList.replaceChildren();
     if (messages.length === 0) {
       const empty = document.createElement('p');
@@ -147,7 +152,8 @@
       article.append(actions);
       messageList.append(article);
     });
-    messageList.scrollTop = messageList.scrollHeight;
+    messageList.scrollTop = shouldFollowLatest ? messageList.scrollHeight : previousScrollTop;
+    lastRenderedMessageId = newestMessageId;
   };
 
   const loadConversations = async () => {

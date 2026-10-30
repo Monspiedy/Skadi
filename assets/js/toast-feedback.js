@@ -3,11 +3,12 @@
 
   const toasts = [...document.querySelectorAll('[data-success-toast]')];
   if (toasts.length === 0) return;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const dismissToast = (toast) => {
     if (toast.classList.contains('is-leaving')) return;
     toast.classList.add('is-leaving');
-    window.setTimeout(() => toast.remove(), 220);
+    window.setTimeout(() => toast.remove(), reducedMotion ? 0 : 220);
   };
 
   toasts.forEach((toast) => {

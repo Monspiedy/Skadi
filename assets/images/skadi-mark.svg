@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title description">
+  <title id="title">Skadi ice-rune mark</title>
+  <desc id="description">An original angular ice crystal shaped from two interlocking mountain facets.</desc>
+  <path fill="#07121f" d="M32 3 56 17v30L32 61 8 47V17z"/>
+  <path fill="#62d9f7" d="m32 8 18 11-18 8-18-8z"/>
+  <path fill="#99edff" d="m14 19 18 8-9 9-15 11V22z"/>
+  <path fill="#2d5874" d="m50 19-18 8 9 9 15 11V22z"/>
+  <path fill="#f1f8fc" d="m23 36 9-9 9 9-9 20z"/>
+  <path fill="none" stroke="#99edff" stroke-linecap="round" stroke-width="3" d="m18 45 14-7 14 7"/>
+</svg>

@@ -16,6 +16,11 @@
   --sk-success: #6ee7b7;
   --sk-warning: #facc72;
   --sk-danger: #ff91a3;
+  --sk-danger-surface: #3b1722;
+  --sk-success-surface: #102f29;
+  --sk-warning-surface: #3a2d12;
+  --sk-disabled: #7892a3;
+  --sk-control: #081827;
   --sk-focus: #b7f3ff;
   --sk-header: rgb(5 15 25 / 94%);
   --sk-hero-glow: rgb(65 200 237 / 18%);
@@ -48,6 +53,11 @@
   --sk-success: #79d5ac;
   --sk-warning: #f3ca72;
   --sk-danger: #ff9ca8;
+  --sk-danger-surface: #3a1b21;
+  --sk-success-surface: #173229;
+  --sk-warning-surface: #382d18;
+  --sk-disabled: #9298a1;
+  --sk-control: #17191e;
   --sk-focus: #e3e8ef;
   --sk-header: rgb(18 20 24 / 95%);
   --sk-hero-glow: rgb(174 184 199 / 10%);
@@ -70,6 +80,11 @@
   --sk-success: #08784e;
   --sk-warning: #875500;
   --sk-danger: #a92743;
+  --sk-danger-surface: #fff0f3;
+  --sk-success-surface: #e5f8ef;
+  --sk-warning-surface: #fff5dc;
+  --sk-disabled: #687b82;
+  --sk-control: #ffffff;
   --sk-focus: #005c75;
   --sk-header: rgb(247 252 253 / 96%);
   --sk-hero-glow: rgb(0 119 148 / 13%);
@@ -85,6 +100,13 @@ body {
     radial-gradient(circle at 82% 8%, var(--sk-hero-glow), transparent 28rem),
     linear-gradient(155deg, var(--sk-bg), var(--sk-bg-deep));
   color: var(--sk-text);
+  --bs-body-color: var(--sk-text);
+  --bs-body-bg: var(--sk-bg);
+  --bs-border-color: var(--sk-border);
+  --bs-secondary-color: var(--sk-muted);
+  --bs-tertiary-bg: var(--sk-surface-raised);
+  --bs-link-color: var(--sk-accent);
+  --bs-link-hover-color: var(--sk-accent-strong);
 }
 
 a {
@@ -100,6 +122,14 @@ a:hover {
   outline-offset: 3px;
 }
 
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: 0;
+}
+
 .btn-primary {
   --bs-btn-bg: var(--sk-accent);
   --bs-btn-border-color: var(--sk-accent);
@@ -107,4 +137,109 @@ a:hover {
   --bs-btn-hover-bg: var(--sk-accent-strong);
   --bs-btn-hover-border-color: var(--sk-accent-strong);
   --bs-btn-hover-color: var(--sk-accent-ink);
+  --bs-btn-active-bg: var(--sk-accent-strong);
+  --bs-btn-active-border-color: var(--sk-focus);
+  --bs-btn-active-color: var(--sk-accent-ink);
+  --bs-btn-disabled-bg: var(--sk-surface-soft);
+  --bs-btn-disabled-border-color: var(--sk-border);
+  --bs-btn-disabled-color: var(--sk-disabled);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--sk-text);
+  --bs-btn-border-color: var(--sk-border);
+  --bs-btn-hover-bg: var(--sk-surface-soft);
+  --bs-btn-hover-border-color: var(--sk-accent);
+  --bs-btn-hover-color: var(--sk-text);
+  --bs-btn-active-bg: var(--sk-surface-raised);
+  --bs-btn-active-border-color: var(--sk-focus);
+  --bs-btn-active-color: var(--sk-text);
+  --bs-btn-disabled-color: var(--sk-disabled);
+  --bs-btn-disabled-border-color: var(--sk-border);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--sk-danger);
+  --bs-btn-border-color: var(--sk-danger);
+  --bs-btn-hover-bg: var(--sk-danger-surface);
+  --bs-btn-hover-border-color: var(--sk-danger);
+  --bs-btn-hover-color: var(--sk-text);
+  --bs-btn-active-bg: var(--sk-danger-surface);
+  --bs-btn-active-border-color: var(--sk-danger);
+  --bs-btn-active-color: var(--sk-text);
+}
+
+.form-control,
+.form-select {
+  border-color: var(--sk-border);
+  background-color: var(--sk-control);
+  color: var(--sk-text);
+}
+
+.form-control::placeholder {
+  color: var(--sk-muted);
+  opacity: 0.85;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--sk-accent);
+  background-color: var(--sk-control);
+  color: var(--sk-text);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--sk-focus) 28%, transparent);
+}
+
+.form-control:disabled,
+.form-select:disabled,
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  border-color: var(--sk-border);
+  background-color: var(--sk-surface-raised);
+  color: var(--sk-disabled);
+}
+
+.form-check-input {
+  border-color: var(--sk-border);
+  background-color: var(--sk-control);
+}
+
+.form-check-input:checked {
+  border-color: var(--sk-accent);
+  background-color: var(--sk-accent);
+}
+
+.text-secondary,
+.text-muted {
+  color: var(--sk-muted) !important;
+}
+
+.text-danger {
+  color: var(--sk-danger) !important;
+}
+
+.alert-warning {
+  border-color: var(--sk-warning);
+  background: var(--sk-warning-surface);
+  color: var(--sk-text);
+}
+
+.table {
+  --bs-table-color: var(--sk-text);
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--sk-border);
+  --bs-table-striped-color: var(--sk-text);
+  --bs-table-striped-bg: color-mix(in srgb, var(--sk-surface-raised) 62%, transparent);
+  --bs-table-hover-color: var(--sk-text);
+  --bs-table-hover-bg: var(--sk-surface-soft);
+}
+
+.badge.text-bg-primary {
+  border: 1px solid color-mix(in srgb, var(--sk-accent) 70%, var(--sk-border));
+  background-color: var(--sk-accent) !important;
+  color: var(--sk-accent-ink) !important;
 }

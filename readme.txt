@@ -130,6 +130,8 @@ Guides and community
     supported public content. Private chat never appears in community/admin feeds.
 
 Themes and JavaScript
+  - The shared header, footer and browser tab use original code-native SVG ice-rune branding
+    from assets/images/. No external font, icon, image or network request is required.
   - Choose Skadi, Dark or Light in the navigation. Guest choice uses localStorage; signed-in
     choice is also stored in user_profiles.
   - JavaScript visibly powers theme persistence, countdown, live catalog suggestions, chat

@@ -14,7 +14,7 @@ Skadi does not process real payments, distribute games or copy storefront source
 - Allowlisted-BBCode guides, votes, favorites and comments
 - Community Center, per-game hubs, discussions, posts, likes, comments and reports
 - Administrator dashboard, catalog/media CRUD, featured ordering, account controls, audited wallet adjustments, moderation, reports and weekend-sale tools
-- Skadi, Dark and Light themes with responsive local Bootstrap styling
+- Original code-native SVG ice-rune branding plus Skadi, Dark and Light themes with responsive local Bootstrap styling
 
 ## Technology
 

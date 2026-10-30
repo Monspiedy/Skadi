@@ -6,7 +6,11 @@ declare(strict_types=1);
 <footer class="site-footer">
     <div class="container footer-grid">
         <div>
-            <a class="footer-brand" href="<?= escape(baseUrl()) ?>">Skadi</a>
+            <a class="footer-brand" href="<?= escape(baseUrl()) ?>" aria-label="Skadi home">
+                <img src="<?= escape(baseUrl('assets/images/skadi-mark.svg')) ?>" width="32" height="32"
+                    alt="" aria-hidden="true">
+                <span>Skadi</span>
+            </a>
             <p>An original educational game store and community. Demo currency only.</p>
         </div>
         <nav aria-label="Footer navigation">

@@ -16,9 +16,10 @@ function navigationClass(bool $isActive): string
 <header class="site-header sticky-top">
     <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
         <div class="container">
-            <a class="navbar-brand brand" href="<?= escape(baseUrl()) ?>">
-                <span class="brand-mark" aria-hidden="true">S</span>
-                <span>Skadi</span>
+            <a class="navbar-brand brand" href="<?= escape(baseUrl()) ?>" aria-label="Skadi home">
+                <img class="brand-mark" src="<?= escape(baseUrl('assets/images/skadi-mark.svg')) ?>"
+                    width="40" height="40" alt="" aria-hidden="true">
+                <span class="brand-wordmark">Skadi</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#primary-navigation" aria-controls="primary-navigation"
