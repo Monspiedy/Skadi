@@ -1766,6 +1766,480 @@ section > h1 {
   border-style: dashed;
 }
 
+/* UX stage 3: game detail, wishlist and public profile hierarchy. */
+.game-detail {
+  display: grid;
+  gap: 1rem;
+}
+
+.game-detail-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1rem, 3vw, 2.25rem);
+  border: 1px solid var(--sk-border);
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--sk-surface) 96%, transparent), color-mix(in srgb, var(--sk-surface-raised) 78%, transparent)),
+    radial-gradient(circle at 20% 20%, var(--sk-hero-glow), transparent 45%);
+  box-shadow: var(--sk-shadow);
+}
+
+.game-detail-kicker,
+.game-account-state,
+.wishlist-status-row,
+.wishlist-price,
+.profile-context,
+.profile-panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.game-detail-kicker {
+  justify-content: space-between;
+}
+
+.game-detail-kicker .eyebrow {
+  margin: 0;
+}
+
+.discount-badge,
+.game-state-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 1.7rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--sk-accent) 60%, var(--sk-border));
+  border-radius: 999px;
+  color: var(--sk-accent-strong);
+  background: color-mix(in srgb, var(--sk-accent) 12%, var(--sk-surface));
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.035em;
+  line-height: 1;
+}
+
+.game-state-owned {
+  border-color: color-mix(in srgb, var(--sk-success) 60%, var(--sk-border));
+  color: var(--sk-success);
+  background: color-mix(in srgb, var(--sk-success) 10%, var(--sk-surface));
+}
+
+.price-panel-sale {
+  border-color: color-mix(in srgb, var(--sk-accent) 70%, var(--sk-border));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sk-accent) 12%, transparent);
+}
+
+.game-current-price strong {
+  font-size: clamp(1.65rem, 4vw, 2.35rem);
+}
+
+.game-base-price s {
+  color: var(--sk-muted);
+  text-decoration-thickness: 0.12em;
+}
+
+.game-account-state {
+  margin-bottom: 1.4rem;
+  padding: 0.85rem;
+  border-left: 0.2rem solid var(--sk-accent);
+  background: color-mix(in srgb, var(--sk-surface-raised) 65%, transparent);
+}
+
+.game-account-state form {
+  margin: 0;
+}
+
+.game-account-state > span:last-child:not(.game-state-pill) {
+  color: var(--sk-muted);
+  font-size: 0.85rem;
+}
+
+.game-section-nav {
+  display: grid;
+  gap: 0.2rem;
+  padding: 1rem;
+  border: 1px solid var(--sk-border);
+  border-radius: 1rem;
+  background: var(--sk-surface);
+}
+
+.game-section-nav p {
+  margin: 0 0 0.35rem;
+}
+
+.game-section-nav a {
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.5rem;
+  color: var(--sk-text);
+  text-decoration: none;
+}
+
+.game-section-nav a:hover,
+.game-section-nav a:focus-visible {
+  background: var(--sk-surface-raised);
+  color: var(--sk-accent-strong);
+}
+
+.game-side-panel > section:last-child .btn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.wishlist-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  padding: 0.85rem 1rem;
+  border-block: 1px solid var(--sk-border);
+}
+
+.wishlist-toolbar p {
+  margin: 0;
+  color: var(--sk-muted);
+}
+
+.wishlist-toolbar form {
+  display: grid;
+  grid-template-columns: auto minmax(10rem, 1fr) auto;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.wishlist-toolbar label {
+  color: var(--sk-muted);
+  font-size: 0.85rem;
+}
+
+.wishlist-item {
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+}
+
+.wishlist-item > .game-reference {
+  flex: 1 1 auto;
+  align-items: stretch;
+  padding: 1rem;
+}
+
+.wishlist-item h2 {
+  margin: 0.35rem 0 0.5rem;
+}
+
+.wishlist-item .game-reference-body > p {
+  max-width: 46rem;
+  margin-bottom: 0.55rem;
+  color: var(--sk-muted);
+}
+
+.wishlist-item .game-reference-body > small {
+  color: var(--sk-muted);
+}
+
+.wishlist-actions {
+  min-width: 12rem;
+  justify-content: center;
+  padding: 1rem;
+  border-left: 1px solid var(--sk-border);
+  background: color-mix(in srgb, var(--sk-surface-raised) 55%, var(--sk-surface));
+}
+
+.wishlist-price {
+  justify-content: flex-end;
+}
+
+.wishlist-price strong {
+  width: 100%;
+  color: var(--sk-text);
+  font-size: 1.35rem;
+  text-align: right;
+}
+
+.wishlist-price s {
+  color: var(--sk-muted);
+}
+
+.profile-hero {
+  justify-content: space-between;
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  border-radius: 1.2rem;
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--sk-surface) 94%, transparent), color-mix(in srgb, var(--sk-surface-raised) 75%, transparent)),
+    radial-gradient(circle at 12% 20%, var(--sk-hero-glow), transparent 42%);
+  box-shadow: var(--sk-shadow);
+}
+
+.profile-identity {
+  display: flex;
+  gap: clamp(1rem, 3vw, 1.75rem);
+  align-items: center;
+  min-width: 0;
+}
+
+.profile-identity h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  line-height: 1;
+}
+
+.profile-context {
+  margin-top: 0.75rem;
+}
+
+.profile-context > span {
+  padding-right: 0.6rem;
+  color: var(--sk-muted);
+  font-size: 0.82rem;
+}
+
+.profile-context > span + span {
+  border-left: 1px solid var(--sk-border);
+  padding-left: 0.6rem;
+}
+
+.profile-context .presence {
+  margin: 0;
+}
+
+.profile-hero-actions {
+  flex: 0 0 auto;
+}
+
+.profile-overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(17rem, 0.65fr);
+  gap: 1rem;
+}
+
+.profile-about {
+  display: grid;
+  align-content: start;
+}
+
+.profile-about h2 {
+  margin-top: 0;
+}
+
+.profile-about small {
+  color: var(--sk-muted);
+}
+
+.profile-statistics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--sk-border);
+  border-radius: 0.85rem;
+  background: var(--sk-surface);
+}
+
+.profile-statistics div {
+  display: grid;
+  place-content: center;
+  min-height: 8rem;
+  padding: 1rem 0.55rem;
+  text-align: center;
+}
+
+.profile-statistics div + div {
+  border-left: 1px solid var(--sk-border);
+}
+
+.profile-statistics strong {
+  color: var(--sk-accent-strong);
+  font-size: clamp(1.8rem, 4vw, 2.65rem);
+  line-height: 1;
+}
+
+.profile-statistics span,
+.profile-panel-heading > span {
+  color: var(--sk-muted);
+  font-size: 0.78rem;
+}
+
+.profile-panel-heading {
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.profile-panel-heading h2,
+.profile-panel-heading p {
+  margin: 0;
+}
+
+.profile-library-panel {
+  grid-column: 1 / -1;
+}
+
+.profile-game-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-game-card {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  min-width: 0;
+  padding: 0.65rem;
+  border: 1px solid var(--sk-border);
+  border-radius: 0.7rem;
+  color: var(--sk-text);
+  background: var(--sk-surface-raised);
+  text-decoration: none;
+}
+
+.profile-game-card:hover {
+  border-color: var(--sk-accent);
+  color: var(--sk-accent-strong);
+}
+
+.profile-game-card .game-thumbnail {
+  width: 4rem;
+}
+
+.profile-game-card > span,
+.profile-review-list .game-reference-body,
+.profile-activity-list .game-reference-body {
+  display: grid;
+  min-width: 0;
+}
+
+.profile-game-card strong,
+.profile-review-list a,
+.profile-activity-list a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-game-card small,
+.profile-review-list small,
+.profile-activity-list small {
+  color: var(--sk-muted);
+  font-size: 0.75rem;
+}
+
+.profile-list {
+  padding: 0;
+  list-style: none;
+}
+
+.profile-list li {
+  padding-block: 0.55rem;
+  border-top: 1px solid var(--sk-border);
+}
+
+.profile-list li:first-child {
+  border-top: 0;
+}
+
+@media (max-width: 61.99rem) {
+  .profile-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-game-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 35.99rem) {
+  .game-detail-hero {
+    padding: 0.8rem;
+  }
+
+  .game-detail-summary h1 {
+    font-size: clamp(2.15rem, 13vw, 3.4rem);
+  }
+
+  .game-account-state,
+  .game-account-state .btn,
+  .game-account-state form,
+  .game-account-state button {
+    width: 100%;
+  }
+
+  .price-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .price-panel small {
+    grid-column: auto;
+  }
+
+  .wishlist-toolbar,
+  .wishlist-item,
+  .profile-identity {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wishlist-toolbar form {
+    grid-template-columns: 1fr;
+  }
+
+  .wishlist-item > .game-reference {
+    align-items: flex-start;
+  }
+
+  .wishlist-item .game-thumbnail-large {
+    width: 5rem;
+  }
+
+  .wishlist-actions {
+    width: 100%;
+    min-width: 0;
+    align-items: stretch;
+    border-top: 1px solid var(--sk-border);
+    border-left: 0;
+  }
+
+  .wishlist-price {
+    justify-content: flex-start;
+  }
+
+  .wishlist-price strong {
+    width: auto;
+    text-align: left;
+  }
+
+  .profile-hero,
+  .profile-identity {
+    align-items: flex-start;
+  }
+
+  .profile-avatar-large {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+
+  .profile-statistics {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-statistics div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    min-height: 0;
+  }
+
+  .profile-statistics div + div {
+    border-top: 1px solid var(--sk-border);
+    border-left: 0;
+  }
+
+  .profile-game-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Phase 12 player guides and the intentionally small BBCode editor. */
 .guides-page,
 .guide-detail,

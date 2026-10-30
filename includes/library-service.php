@@ -171,14 +171,18 @@ function loadWishlist(PDO $connection, int $userId): array
 {
     $statement = $connection->prepare(
         "SELECT wi.game_id, wi.created_at, g.title, g.short_description, g.base_price,
-                cover.storage_path AS cover_path, cover.alt_text AS cover_alt
+                cover.storage_path AS cover_path, cover.alt_text AS cover_alt,
+                CASE WHEN li.id IS NULL THEN 0 ELSE 1 END AS is_owned,
+                CASE WHEN ci.game_id IS NULL THEN 0 ELSE 1 END AS is_in_cart
          FROM wishlist_items wi
          INNER JOIN games g ON g.id = wi.game_id AND g.status = 'published'
          LEFT JOIN library_items li
             ON li.user_id = wi.user_id AND li.game_id = wi.game_id AND li.removed_at IS NULL
+         LEFT JOIN cart_items ci
+            ON ci.user_id = wi.user_id AND ci.game_id = wi.game_id
          LEFT JOIN game_media cover
             ON cover.game_id = g.id AND cover.media_type = 'cover' AND cover.sort_order = 0
-         WHERE wi.user_id = :user_id AND li.id IS NULL
+         WHERE wi.user_id = :user_id
          ORDER BY wi.created_at DESC, g.title"
     );
     $statement->execute(['user_id' => $userId]);
@@ -192,6 +196,75 @@ function loadWishlist(PDO $connection, int $userId): array
     unset($item);
 
     return $items;
+}
+
+function parseWishlistSort(array $query): array
+{
+    $rawSort = $query['sort'] ?? 'newest';
+    $sort = is_string($rawSort) ? $rawSort : 'newest';
+    if (!in_array($sort, ['newest', 'discount', 'price'], true)) {
+        return [
+            'sort' => 'newest',
+            'warning' => 'The wishlist sort was not recognized and has been reset to newest.',
+        ];
+    }
+
+    return ['sort' => $sort, 'warning' => null];
+}
+
+/**
+ * Wishlist rows are bounded by one user's saved games, so sorting the authoritative
+ * prices after the single pricing read stays simple and avoids repeating sale SQL.
+ */
+function sortWishlistItems(array $items, string $sort): array
+{
+    if ($sort === 'newest') {
+        return $items;
+    }
+
+    usort($items, static function (array $left, array $right) use ($sort): int {
+        if ($sort === 'discount') {
+            $comparison = (int) $right['discount_percent'] <=> (int) $left['discount_percent'];
+        } else {
+            $comparison = moneyToCents((string) $left['current_price'])
+                <=> moneyToCents((string) $right['current_price']);
+        }
+
+        return $comparison !== 0 ? $comparison : strcasecmp((string) $left['title'], (string) $right['title']);
+    });
+
+    return $items;
+}
+
+function loadViewerGameState(PDO $connection, int $userId, int $gameId): array
+{
+    $statement = $connection->prepare(
+        'SELECT EXISTS(
+            SELECT 1 FROM library_items
+            WHERE user_id = :library_user_id AND game_id = :library_game_id AND removed_at IS NULL
+        ) AS is_owned,
+        EXISTS(
+            SELECT 1 FROM cart_items WHERE user_id = :cart_user_id AND game_id = :cart_game_id
+        ) AS is_in_cart,
+        EXISTS(
+            SELECT 1 FROM wishlist_items WHERE user_id = :wishlist_user_id AND game_id = :wishlist_game_id
+        ) AS is_wishlisted'
+    );
+    $statement->execute([
+        'library_user_id' => $userId,
+        'library_game_id' => $gameId,
+        'cart_user_id' => $userId,
+        'cart_game_id' => $gameId,
+        'wishlist_user_id' => $userId,
+        'wishlist_game_id' => $gameId,
+    ]);
+    $state = $statement->fetch() ?: [];
+
+    return [
+        'is_owned' => !empty($state['is_owned']),
+        'is_in_cart' => !empty($state['is_in_cart']),
+        'is_wishlisted' => !empty($state['is_wishlisted']),
+    ];
 }
 
 function moveWishlistGameToCart(PDO $connection, int $userId, int $gameId): void
@@ -377,4 +450,10 @@ function formatUtcDateTime(string $value): string
 {
     $date = new DateTimeImmutable($value, new DateTimeZone('UTC'));
     return $date->setTimezone(new DateTimeZone((string) appConfig('timezone')))->format('M j, Y H:i');
+}
+
+function formatUtcMonthYear(string $value): string
+{
+    $date = new DateTimeImmutable($value, new DateTimeZone('UTC'));
+    return $date->setTimezone(new DateTimeZone((string) appConfig('timezone')))->format('F Y');
 }

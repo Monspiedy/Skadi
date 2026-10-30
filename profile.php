@@ -23,27 +23,35 @@ $library = $privacy['can_view_details'] ? loadProfileLibrary(db(), (int) $profil
 $reviews = $privacy['can_view_details'] ? loadProfileReviews(db(), (int) $profile['id']) : [];
 $friends = $privacy['can_view_details'] ? loadAcceptedFriends(db(), (int) $profile['id']) : [];
 $activity = $privacy['can_view_details'] ? buildProfileActivity($library, $reviews) : [];
+$statistics = $privacy['can_view_details'] ? loadProfileStatistics(db(), (int) $profile['id']) : null;
 $presence = $privacy['is_blocked'] ? null : publicPresenceLabel($profile, $privacy['is_owner']);
 $pageTitle = (string) $profile['display_name'];
 require SKADI_ROOT . '/includes/header.php';
 ?>
 <section class="social-page public-profile" aria-labelledby="profile-heading">
     <header class="profile-hero">
-        <?php if (is_string($profile['avatar_path']) && isManagedAvatarUploadPath($profile['avatar_path'])): ?>
-            <img class="profile-avatar profile-avatar-large" src="<?= escape(baseUrl($profile['avatar_path'])) ?>" alt="<?= escape($profile['display_name']) ?> avatar">
-        <?php else: ?>
-            <span class="profile-avatar profile-avatar-large profile-avatar-placeholder" aria-hidden="true"><?= escape(mb_strtoupper(mb_substr($profile['display_name'], 0, 1))) ?></span>
-        <?php endif; ?>
-        <div>
-            <p class="eyebrow">Skadi profile</p>
-            <h1 id="profile-heading"><?= escape($profile['display_name']) ?></h1>
-            <p class="subtle-skadi-id"><?= escape($profile['skadi_id']) ?></p>
-            <?php if ($presence !== null): ?><span class="presence presence-<?= escape(strtolower(str_replace(' ', '-', $presence))) ?>"><?= escape($presence) ?></span><?php endif; ?>
+        <div class="profile-identity">
+            <?php if (is_string($profile['avatar_path']) && isManagedAvatarUploadPath($profile['avatar_path'])): ?>
+                <img class="profile-avatar profile-avatar-large" src="<?= escape(baseUrl($profile['avatar_path'])) ?>" alt="<?= escape($profile['display_name']) ?> avatar">
+            <?php else: ?>
+                <span class="profile-avatar profile-avatar-large profile-avatar-placeholder" aria-hidden="true"><?= escape(mb_strtoupper(mb_substr($profile['display_name'], 0, 1))) ?></span>
+            <?php endif; ?>
+            <div>
+                <p class="eyebrow">Skadi player</p>
+                <h1 id="profile-heading"><?= escape($profile['display_name']) ?></h1>
+                <p class="subtle-skadi-id">Skadi ID · <?= escape($profile['skadi_id']) ?></p>
+                <div class="profile-context">
+                    <?php if ($presence !== null): ?><span class="presence presence-<?= escape(strtolower(str_replace(' ', '-', $presence))) ?>"><?= escape($presence) ?></span><?php endif; ?>
+                    <span><?= escape(ucwords(str_replace('_', ' ', (string) $profile['profile_visibility']))) ?> profile</span>
+                    <?php if ($privacy['is_friend']): ?><span>Friend</span><?php endif; ?>
+                </div>
+            </div>
         </div>
-        <?php if ($privacy['is_owner']): ?>
-            <a class="btn btn-primary" href="<?= escape(baseUrl('profile-settings.php')) ?>">Edit profile</a>
-        <?php elseif ($viewerId !== null && $relationship !== null): ?>
-            <form class="social-actions" method="post" action="<?= escape(baseUrl('actions/social-action.php')) ?>">
+        <div class="profile-hero-actions">
+            <?php if ($privacy['is_owner']): ?>
+                <a class="btn btn-primary" href="<?= escape(baseUrl('profile-settings.php')) ?>">Edit profile</a>
+            <?php elseif ($viewerId !== null && $relationship !== null): ?>
+                <form class="social-actions" method="post" action="<?= escape(baseUrl('actions/social-action.php')) ?>">
                 <?= csrfInput() ?>
                 <input type="hidden" name="target_user_id" value="<?= (int) $profile['id'] ?>">
                 <input type="hidden" name="return_to" value="profile">
@@ -62,31 +70,42 @@ require SKADI_ROOT . '/includes/header.php';
                     <?php endif; ?>
                     <button class="btn btn-outline-danger" name="social_action" value="block" type="submit">Block</button>
                 <?php endif; ?>
-            </form>
-        <?php endif; ?>
+                </form>
+            <?php endif; ?>
+        </div>
     </header>
 
     <?php if ($privacy['can_view_details']): ?>
-        <?php if (!empty($profile['biography'])): ?><section class="profile-panel"><h2>About</h2><p class="profile-biography"><?= nl2br(escape($profile['biography'])) ?></p></section><?php endif; ?>
+        <div class="profile-overview-grid">
+            <section class="profile-panel profile-about"><p class="eyebrow">About</p><h2>Player profile</h2>
+                <?php if (!empty($profile['biography'])): ?><p class="profile-biography"><?= nl2br(escape($profile['biography'])) ?></p><?php else: ?><p class="form-note">No biography added yet.</p><?php endif; ?>
+                <small>Member since <?= escape(formatUtcMonthYear((string) $profile['created_at'])) ?></small>
+            </section>
+            <section class="profile-statistics" aria-label="Visible profile statistics">
+                <div><strong><?= (int) $statistics['game_count'] ?></strong><span>Visible games</span></div>
+                <div><strong><?= (int) $statistics['review_count'] ?></strong><span>Reviews</span></div>
+                <div><strong><?= (int) $statistics['friend_count'] ?></strong><span>Friends</span></div>
+            </section>
+        </div>
         <div class="profile-section-grid">
-            <section class="profile-panel"><h2>Library</h2>
-                <?php if ($library === []): ?><p>No visible games.</p><?php else: ?><ul class="profile-list">
-                    <?php foreach ($library as $game): ?><li><div class="game-reference"><?php renderGameThumbnail($game); ?><a class="game-reference-body" href="<?= escape(baseUrl('game.php?id=' . $game['id'])) ?>"><?= escape($game['title']) ?></a></div></li><?php endforeach; ?>
+            <section class="profile-panel profile-library-panel"><div class="profile-panel-heading"><div><p class="eyebrow">Collection</p><h2>Library</h2></div><span><?= (int) $statistics['game_count'] ?> visible</span></div>
+                <?php if ($library === []): ?><p>No visible games.</p><?php else: ?><div class="profile-game-grid">
+                    <?php foreach ($library as $game): ?><a class="profile-game-card" href="<?= escape(baseUrl('game.php?id=' . $game['id'])) ?>"><?php renderGameThumbnail($game, 'large'); ?><span><strong><?= escape($game['title']) ?></strong><small>Added <?= escape(formatUtcDateTime($game['acquired_at'])) ?></small></span></a><?php endforeach; ?>
+                </div><?php endif; ?>
+            </section>
+            <section class="profile-panel"><div class="profile-panel-heading"><div><p class="eyebrow">Player voice</p><h2>Reviews</h2></div><span><?= (int) $statistics['review_count'] ?> published</span></div>
+                <?php if ($reviews === []): ?><p>No active reviews.</p><?php else: ?><ul class="profile-list profile-review-list">
+                    <?php foreach ($reviews as $review): ?><li><div class="game-reference"><?php renderGameThumbnail($review, 'medium'); ?><span class="game-reference-body"><span><a href="<?= escape(baseUrl('game.php?id=' . $review['game_id'] . '#reviews')) ?>"><?= escape($review['title']) ?></a> <strong><?= (int) $review['rating'] ?>/10</strong></span><?php if (!empty($review['body'])): ?><small><?= escape(mb_strimwidth((string) $review['body'], 0, 110, '…')) ?></small><?php endif; ?></span></div></li><?php endforeach; ?>
                 </ul><?php endif; ?>
             </section>
-            <section class="profile-panel"><h2>Reviews</h2>
-                <?php if ($reviews === []): ?><p>No active reviews.</p><?php else: ?><ul class="profile-list">
-                    <?php foreach ($reviews as $review): ?><li><div class="game-reference"><?php renderGameThumbnail($review); ?><span class="game-reference-body"><a href="<?= escape(baseUrl('game.php?id=' . $review['game_id'] . '#reviews')) ?>"><?= escape($review['title']) ?></a> <strong><?= (int) $review['rating'] ?>/10</strong></span></div></li><?php endforeach; ?>
-                </ul><?php endif; ?>
+            <section class="profile-panel"><div class="profile-panel-heading"><div><p class="eyebrow">Timeline</p><h2>Recent activity</h2></div></div>
+                <?php if ($activity === []): ?><p>No visible activity.</p><?php else: ?><ol class="profile-list profile-activity-list">
+                    <?php foreach ($activity as $item): ?><li><div class="game-reference"><?php renderGameThumbnail($item); ?><span class="game-reference-body"><span><?= $item['type'] === 'review' ? 'Reviewed' : 'Added' ?> <a href="<?= escape(baseUrl('game.php?id=' . $item['game_id'])) ?>"><?= escape($item['game_title']) ?></a></span><small><?= escape(formatUtcDateTime($item['occurred_at'])) ?></small></span></div></li><?php endforeach; ?>
+                </ol><?php endif; ?>
             </section>
-            <section class="profile-panel"><h2>Recent activity</h2>
-                <?php if ($activity === []): ?><p>No visible activity.</p><?php else: ?><ul class="profile-list">
-                    <?php foreach ($activity as $item): ?><li><div class="game-reference"><?php renderGameThumbnail($item); ?><span class="game-reference-body"><?= $item['type'] === 'review' ? 'Reviewed' : 'Added' ?> <a href="<?= escape(baseUrl('game.php?id=' . $item['game_id'])) ?>"><?= escape($item['game_title']) ?></a></span></div></li><?php endforeach; ?>
-                </ul><?php endif; ?>
-            </section>
-            <section class="profile-panel"><h2>Friends</h2>
+            <section class="profile-panel"><div class="profile-panel-heading"><div><p class="eyebrow">Circle</p><h2>Friends</h2></div><span><?= (int) $statistics['friend_count'] ?> total</span></div>
                 <?php if ($friends === []): ?><p>No visible friends.</p><?php else: ?><ul class="profile-list">
-                    <?php foreach ($friends as $friend): ?><li><a href="<?= escape(baseUrl('profile.php?id=' . rawurlencode($friend['skadi_id']))) ?>"><?= escape($friend['display_name']) ?></a> <small><?= escape($friend['skadi_id']) ?></small></li><?php endforeach; ?>
+                    <?php foreach ($friends as $friend): ?><li><a href="<?= escape(baseUrl('profile.php?id=' . rawurlencode($friend['skadi_id']))) ?>"><?= escape($friend['display_name']) ?></a> <small>Skadi ID · <?= escape($friend['skadi_id']) ?></small></li><?php endforeach; ?>
                 </ul><?php endif; ?>
             </section>
         </div>

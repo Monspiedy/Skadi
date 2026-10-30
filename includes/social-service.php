@@ -252,6 +252,40 @@ function loadProfileReviews(PDO $connection, int $userId, int $limit = 12): arra
     return $statement->fetchAll();
 }
 
+/**
+ * Call only after profilePrivacyAccess() grants detail visibility. These counts use
+ * the same visible rows as the profile sections, so private data cannot leak in totals.
+ */
+function loadProfileStatistics(PDO $connection, int $userId): array
+{
+    $statement = $connection->prepare(
+        "SELECT
+            (SELECT COUNT(*) FROM library_items
+             WHERE user_id = :library_user_id AND removed_at IS NULL AND hidden_at IS NULL) AS game_count,
+            (SELECT COUNT(*) FROM reviews
+             WHERE user_id = :review_user_id AND status = 'active') AS review_count,
+            (SELECT COUNT(*) FROM friendships f
+             INNER JOIN users friend_user ON friend_user.id = CASE
+                WHEN f.user_low_id = :friend_select_id THEN f.user_high_id ELSE f.user_low_id END
+             WHERE (f.user_low_id = :friend_low_id OR f.user_high_id = :friend_high_id)
+               AND f.status = 'accepted' AND friend_user.status = 'active') AS friend_count"
+    );
+    $statement->execute([
+        'library_user_id' => $userId,
+        'review_user_id' => $userId,
+        'friend_select_id' => $userId,
+        'friend_low_id' => $userId,
+        'friend_high_id' => $userId,
+    ]);
+    $statistics = $statement->fetch() ?: [];
+
+    return [
+        'game_count' => (int) ($statistics['game_count'] ?? 0),
+        'review_count' => (int) ($statistics['review_count'] ?? 0),
+        'friend_count' => (int) ($statistics['friend_count'] ?? 0),
+    ];
+}
+
 function loadAcceptedFriends(PDO $connection, int $userId, int $limit = 100): array
 {
     $statement = $connection->prepare(

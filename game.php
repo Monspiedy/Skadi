@@ -30,10 +30,12 @@ $currentPrice = loadCurrentPriceRows(db(), [$gameId])[$gameId] ?? [
 ];
 $reviews = loadGameReviews(db(), $gameId);
 $ownsGame = false;
+$viewerGameState = ['is_owned' => false, 'is_in_cart' => false, 'is_wishlisted' => false];
 $userReview = null;
 if (isAuthenticated() && empty(currentUser()['must_change_password'])) {
     $currentUserId = (int) currentUser()['id'];
-    $ownsGame = userCurrentlyOwnsGame(db(), $currentUserId, $gameId);
+    $viewerGameState = loadViewerGameState(db(), $currentUserId, $gameId);
+    $ownsGame = $viewerGameState['is_owned'];
     $userReview = loadUserReview(db(), $currentUserId, $gameId);
 }
 
@@ -64,7 +66,14 @@ require SKADI_ROOT . '/includes/header.php';
             <?php endif; ?>
         </div>
         <div class="game-detail-summary">
-            <p class="eyebrow">Game details</p>
+            <div class="game-detail-kicker">
+                <p class="eyebrow">Store / Game</p>
+                <?php if ($currentPrice['discount_percent'] > 0): ?>
+                    <span class="discount-badge">Weekend Deal · <?= (int) $currentPrice['discount_percent'] ?>% off</span>
+                <?php elseif (moneyToCents($game['base_price']) === 0): ?>
+                    <span class="game-state-pill">Free to play</span>
+                <?php endif; ?>
+            </div>
             <h1><?= escape($game['title']) ?></h1>
             <p class="game-lead"><?= escape($game['short_description']) ?></p>
             <ul class="genre-list" aria-label="Genres">
@@ -72,36 +81,56 @@ require SKADI_ROOT . '/includes/header.php';
                     <li><a href="<?= escape(baseUrl('store.php?genre=' . rawurlencode($genre['slug']))) ?>"><?= escape($genre['name']) ?></a></li>
                 <?php endforeach; ?>
             </ul>
-            <div class="price-panel">
-                <div>
-                    <span>Base price</span>
-                    <strong><?= escape(gamePriceLabel($game['base_price'])) ?></strong>
-                </div>
-                <div>
-                    <span>Current price</span>
+            <div class="price-panel <?= $currentPrice['discount_percent'] > 0 ? 'price-panel-sale' : '' ?>">
+                <div class="game-current-price">
+                    <span><?= $currentPrice['discount_percent'] > 0 ? 'Weekend price' : 'Current price' ?></span>
                     <strong class="<?= moneyToCents($currentPrice['current_price']) === 0 ? 'price-free' : '' ?>">
                         <?= escape(commercePriceLabel($currentPrice['current_price'])) ?>
                     </strong>
                 </div>
-                <small><?= $currentPrice['discount_percent'] > 0
-                    ? escape($currentPrice['discount_percent'] . '% active server discount.')
-                    : (moneyToCents($game['base_price']) === 0 ? 'This game is free to play.' : 'No active discount.') ?></small>
+                <?php if ($currentPrice['discount_percent'] > 0): ?>
+                    <div class="game-base-price">
+                        <span>Regular price</span>
+                        <strong><s><?= escape(gamePriceLabel($game['base_price'])) ?></s></strong>
+                    </div>
+                <?php else: ?>
+                    <div class="game-base-price"><span>Price status</span><strong><?= moneyToCents($game['base_price']) === 0 ? 'Always free' : 'Regular price' ?></strong></div>
+                <?php endif; ?>
+                <small>Price and discount are calculated by Skadi on the server.</small>
             </div>
             <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
-                <div class="game-purchase-actions">
-                    <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
-                        <?= csrfInput() ?>
-                        <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
-                        <button class="btn btn-primary" type="submit">Add to cart</button>
-                    </form>
-                    <form method="post" action="<?= escape(baseUrl('actions/wishlist-add.php')) ?>">
-                        <?= csrfInput() ?>
-                        <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
-                        <button class="btn btn-outline-secondary" type="submit">Add to wishlist</button>
-                    </form>
+                <div class="game-account-state" aria-label="Your game status">
+                    <?php if ($viewerGameState['is_owned']): ?>
+                        <span class="game-state-pill game-state-owned">Owned</span>
+                        <a class="btn btn-primary" href="<?= escape(baseUrl('library.php')) ?>">View in library</a>
+                    <?php elseif ($viewerGameState['is_in_cart']): ?>
+                        <span class="game-state-pill">In cart</span>
+                        <a class="btn btn-primary" href="<?= escape(baseUrl('cart.php')) ?>">View cart</a>
+                        <?php if ($viewerGameState['is_wishlisted']): ?><span class="game-state-pill">Wishlisted</span><?php endif; ?>
+                    <?php else: ?>
+                        <?php if ($viewerGameState['is_wishlisted']): ?>
+                            <span class="game-state-pill">Wishlisted</span>
+                            <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('wishlist.php')) ?>">View wishlist</a>
+                        <?php endif; ?>
+                        <form method="post" action="<?= escape(baseUrl('actions/cart-add.php')) ?>">
+                            <?= csrfInput() ?>
+                            <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
+                            <button class="btn btn-primary" type="submit">Add to cart</button>
+                        </form>
+                        <?php if (!$viewerGameState['is_wishlisted']): ?>
+                            <form method="post" action="<?= escape(baseUrl('actions/wishlist-add.php')) ?>">
+                                <?= csrfInput() ?>
+                                <input type="hidden" name="game_id" value="<?= escape($gameId) ?>">
+                                <button class="btn btn-outline-secondary" type="submit">Add to wishlist</button>
+                            </form>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             <?php else: ?>
-                <a class="btn btn-primary" href="<?= escape(baseUrl('login.php')) ?>">Sign in to purchase</a>
+                <div class="game-account-state">
+                    <a class="btn btn-primary" href="<?= escape(baseUrl('login.php')) ?>">Sign in to add this game</a>
+                    <span>Keep purchases, reviews and wishlists tied to your account.</span>
+                </div>
             <?php endif; ?>
             <dl class="game-facts">
                 <div><dt>Developer</dt><dd><?= escape($game['developer']) ?></dd></div>
@@ -225,6 +254,13 @@ require SKADI_ROOT . '/includes/header.php';
         </div>
 
         <aside class="game-side-panel" aria-label="Game community and reviews">
+            <nav class="game-section-nav" aria-label="Explore this game">
+                <p class="eyebrow">Explore</p>
+                <a href="#about-heading">About</a>
+                <a href="#gallery-heading">Screenshots</a>
+                <a href="#requirements-heading">Requirements</a>
+                <a href="#reviews-heading">Reviews</a>
+            </nav>
             <section>
                 <p class="eyebrow">Player rating</p>
                 <h2><?= escape(gameRatingLabel($game)) ?></h2>
@@ -236,6 +272,8 @@ require SKADI_ROOT . '/includes/header.php';
                 <h2>Community Hub</h2>
                 <p>Browse this game's discussions, guides, screenshots and reviews.</p>
                 <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('game-community.php?id=' . (int) $game['id'])) ?>">Open Community Hub</a>
+                <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('game-community.php?id=' . (int) $game['id'] . '&tab=guides')) ?>">Browse guides</a>
+                <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('game-community.php?id=' . (int) $game['id'] . '&tab=discussions')) ?>">Browse discussions</a>
                 <?php if (isAuthenticated() && empty(currentUser()['must_change_password'])): ?>
                     <a class="btn btn-outline-secondary" href="<?= escape(baseUrl('guide-edit.php?game=' . (int) $game['id'])) ?>">Write a guide</a>
                 <?php endif; ?>
