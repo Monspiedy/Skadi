@@ -41,7 +41,7 @@ $lastResult = min($filters['page'] * CATALOG_PAGE_SIZE, $totalGames);
 $saleCountdown = weekendSaleCountdownState();
 
 $pageTitle = 'Store';
-$pageScripts = ['assets/js/sale-countdown.js'];
+$pageScripts = ['assets/js/sale-countdown.js', 'assets/js/catalog-search.js'];
 require SKADI_ROOT . '/includes/header.php';
 ?>
 <section class="store-intro" aria-labelledby="store-heading">
@@ -89,10 +89,17 @@ require SKADI_ROOT . '/includes/header.php';
     </div>
 
     <form class="catalog-filters" method="get" action="<?= escape(baseUrl('store.php')) ?>">
-        <div class="filter-field filter-search">
+        <div class="filter-field filter-search catalog-search-control" data-catalog-search
+            data-suggestions-url="<?= escape(baseUrl('api/catalog-suggestions.php')) ?>"
+            data-game-url="<?= escape(baseUrl('game.php')) ?>">
             <label for="catalog-search">Title</label>
             <input class="form-control" id="catalog-search" name="q" type="search" maxlength="80"
-                value="<?= escape($filters['search']) ?>" placeholder="Search game titles">
+                value="<?= escape($filters['search']) ?>" placeholder="Search game titles" autocomplete="off"
+                role="combobox" aria-autocomplete="list" aria-controls="catalog-suggestions"
+                aria-expanded="false" data-catalog-search-input>
+            <ul class="catalog-suggestions" id="catalog-suggestions" role="listbox"
+                aria-label="Game suggestions" data-catalog-suggestions hidden></ul>
+            <span class="visually-hidden" aria-live="polite" data-catalog-search-status></span>
         </div>
         <div class="filter-field">
             <label for="catalog-genre">Genre</label>

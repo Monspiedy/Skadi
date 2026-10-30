@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 $navigationUser = currentUser();
 $navigationCartCount = (int) ($navigationUser['cart_game_count'] ?? 0);
+$navigationUnreadChatCount = (int) ($navigationUser['unread_chat_count'] ?? 0);
+$navigationPendingFriendCount = (int) ($navigationUser['pending_friend_count'] ?? 0);
 $currentScript = basename((string) ($_SERVER['SCRIPT_NAME'] ?? 'index.php'));
 
 function navigationClass(bool $isActive): string
@@ -57,14 +59,30 @@ function navigationClass(bool $isActive): string
                                 <?= $currentScript === 'wishlist.php' ? 'aria-current="page"' : '' ?>>Wishlist</a>
                         </li>
                         <li class="nav-item">
-                            <a class="<?= navigationClass($currentScript === 'friends.php') ?>"
+                            <a class="<?= navigationClass($currentScript === 'friends.php') ?> nav-count-link"
                                 href="<?= escape(baseUrl('friends.php')) ?>"
-                                <?= $currentScript === 'friends.php' ? 'aria-current="page"' : '' ?>>Friends</a>
+                                <?= $currentScript === 'friends.php' ? 'aria-current="page"' : '' ?>>
+                                <span>Friends</span>
+                                <?php if ($navigationPendingFriendCount > 0): ?>
+                                    <span class="nav-notification-count" aria-label="<?= escape(
+                                        $navigationPendingFriendCount . ' pending incoming friend '
+                                        . ($navigationPendingFriendCount === 1 ? 'request' : 'requests')
+                                    ) ?>"><?= escape($navigationPendingFriendCount) ?></span>
+                                <?php endif; ?>
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="<?= navigationClass($currentScript === 'chat.php') ?>"
+                            <a class="<?= navigationClass($currentScript === 'chat.php') ?> nav-count-link"
                                 href="<?= escape(baseUrl('chat.php')) ?>"
-                                <?= $currentScript === 'chat.php' ? 'aria-current="page"' : '' ?>>Chat</a>
+                                <?= $currentScript === 'chat.php' ? 'aria-current="page"' : '' ?>>
+                                <span>Chat</span>
+                                <?php if ($navigationUnreadChatCount > 0): ?>
+                                    <span class="nav-notification-count" aria-label="<?= escape(
+                                        $navigationUnreadChatCount . ' unread chat '
+                                        . ($navigationUnreadChatCount === 1 ? 'message' : 'messages')
+                                    ) ?>"><?= escape($navigationUnreadChatCount) ?></span>
+                                <?php endif; ?>
+                            </a>
                         </li>
                     <?php endif; ?>
                 </ul>

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 const CATALOG_PAGE_SIZE = 6;
+const CATALOG_SUGGESTION_LIMIT = 5;
+const CATALOG_SUGGESTION_MIN_LENGTH = 2;
 
 function catalogSortOptions(): array
 {
@@ -39,6 +41,52 @@ function loadCatalogGenres(PDO $connection): array
     );
 
     return $statement->fetchAll();
+}
+
+function escapeCatalogLikeValue(string $value): string
+{
+    return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
+}
+
+function normalizeCatalogSuggestionQuery(mixed $rawQuery): array
+{
+    if (!is_string($rawQuery) || !mb_check_encoding($rawQuery, 'UTF-8')) {
+        return ['valid' => false, 'query' => '', 'error' => 'The search query must be valid text.'];
+    }
+    if (preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $rawQuery) === 1) {
+        return ['valid' => false, 'query' => '', 'error' => 'The search query contains unsupported characters.'];
+    }
+
+    $query = preg_replace('/\s+/u', ' ', trim($rawQuery));
+    if (!is_string($query)) {
+        return ['valid' => false, 'query' => '', 'error' => 'The search query must be valid text.'];
+    }
+
+    if (mb_strlen($query) > 80) {
+        return ['valid' => false, 'query' => '', 'error' => 'The search query must be 80 characters or fewer.'];
+    }
+
+    return ['valid' => true, 'query' => $query, 'error' => null];
+}
+
+function loadCatalogSuggestions(PDO $connection, string $query): array
+{
+    if (mb_strlen($query) < CATALOG_SUGGESTION_MIN_LENGTH) {
+        return [];
+    }
+
+    $statement = $connection->prepare(
+        "SELECT id, title FROM games
+         WHERE status = 'published' AND title LIKE :title_search ESCAPE '\\\\'
+         ORDER BY title ASC
+         LIMIT " . CATALOG_SUGGESTION_LIMIT
+    );
+    $statement->execute(['title_search' => '%' . escapeCatalogLikeValue($query) . '%']);
+
+    return array_map(static fn (array $game): array => [
+        'id' => (int) $game['id'],
+        'title' => (string) $game['title'],
+    ], $statement->fetchAll());
 }
 
 function parseCatalogFilters(array $query, array $genres): array
@@ -98,11 +146,7 @@ function catalogWhere(array $filters): array
 
     if ($filters['search'] !== '') {
         $clauses[] = 'g.title LIKE :title_search';
-        $parameters['title_search'] = '%' . str_replace(
-            ['\\', '%', '_'],
-            ['\\\\', '\\%', '\\_'],
-            $filters['search']
-        ) . '%';
+        $parameters['title_search'] = '%' . escapeCatalogLikeValue($filters['search']) . '%';
     }
 
     if ($filters['genre'] !== '') {

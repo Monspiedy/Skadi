@@ -98,7 +98,9 @@ Create and sign in
   3. Later sign in with the login name or email. Public pages never show the login name.
 
 Browse and purchase
-  1. Open Store; search, filter by genre/price, choose a safe sort and browse pages.
+  1. Open Store; search, filter by genre/price, choose a safe sort and browse pages. With
+     JavaScript enabled, the title field offers up to five published-game suggestions; the
+     same server-rendered search remains available without JavaScript.
   2. Open a game, add it to Cart and review the current server price.
   3. Complete checkout. The server rechecks price, ownership and balance in one transaction.
   4. Confirm the same purchase in Orders, Wallet and Library.
@@ -117,6 +119,7 @@ Profile, friends and chat
   - Hide removes a message only for the current participant. Delete for everyone physically
     removes the sender's message and attachment without a tombstone.
   - Blocking removes/prevents friendship and immediately disables chat/private access.
+  - Signed-in navigation shows authoritative pending incoming-request and unread-chat totals.
 
 Guides and community
   - Any signed-in user can draft/publish a guide for a published game. The editor supports
@@ -129,8 +132,9 @@ Guides and community
 Themes and JavaScript
   - Choose Skadi, Dark or Light in the navigation. Guest choice uses localStorage; signed-in
     choice is also stored in user_profiles.
-  - JavaScript visibly powers theme persistence, countdown, chat polling/unread updates,
-    upload previews, confirmations and guide preview. Core catalog content renders server-side.
+  - JavaScript visibly powers theme persistence, countdown, live catalog suggestions, chat
+    polling/unread updates, upload previews, confirmations, guide preview and dismissible
+    success toasts. Core catalog search and escaped flash feedback remain server-rendered.
 
 6. ADMINISTRATOR WORKFLOWS
 --------------------------
