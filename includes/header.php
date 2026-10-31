@@ -29,6 +29,7 @@ $themeColor = match ($activeTheme) {
     <link rel="stylesheet" href="<?= escape(baseUrl('assets/css/app.css')) ?>">
     <link rel="stylesheet" href="<?= escape(baseUrl('assets/css/themes.css')) ?>">
     <link rel="stylesheet" href="<?= escape(baseUrl('assets/css/layout.css')) ?>">
+    <link rel="stylesheet" href="<?= escape(baseUrl('assets/css/ux6.css')) ?>">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to main content</a>
