@@ -576,6 +576,20 @@ INSERT INTO `game_genres` (`game_id`,`genre_id`) VALUES
     (7,1),(7,10),(8,1),(8,3),(8,10),(9,1),(9,5),(9,6),
     (10,1),(10,6),(10,9),(11,3),(11,7),(11,8),(12,1),(12,2),(12,8),(12,9);
 
+INSERT INTO `game_media` (`game_id`,`media_type`,`storage_path`,`alt_text`,`sort_order`) VALUES
+    (1,'cover','uploads/covers/22fc3e7b39793d98e07042099928ffac.jpg','Counter-Strike 2 cover',0),
+    (2,'cover','uploads/covers/647cb51a6505b8612af8a910a49e5460.jpg','Dota 2 cover',0),
+    (3,'cover','uploads/covers/edab5ce57413f4e8948b429cc6980827.jpg','Cyberpunk 2077 cover',0),
+    (4,'cover','uploads/covers/16797d1e361344199911383b39fc0035.jpg','Baldur''s Gate 3 cover',0),
+    (5,'cover','uploads/covers/4e2d84044642d210583cc98530e186f0.jpg','Red Dead Redemption 2 cover',0),
+    (6,'cover','uploads/covers/e3991adde9a473cbbbee072889e2842d.jpg','The Witcher 3: Wild Hunt cover',0),
+    (7,'cover','uploads/covers/a9fea1ff981bfda9c99dc4fa3eafbdcd.jpg','Grand Theft Auto V cover',0),
+    (8,'cover','uploads/covers/8f016fc9030d60047cde6cfbdaccc218.jpg','Elden Ring cover',0),
+    (9,'cover','uploads/covers/97f5be1d13080f4ee5bc9d0e832f175c.jpg','HELLDIVERS 2 cover',0),
+    (10,'cover','uploads/covers/66266d1baa89dbebb1944547adb4ac3a.jpg','Rust cover',0),
+    (11,'cover','uploads/covers/7888c4fbad5a13d47fa0044d8bc02146.jpg','Stardew Valley cover',0),
+    (12,'cover','uploads/covers/54781973361700c44b712ecb4eb4c18b.jpg','Terraria cover',0);
+
 INSERT INTO `featured_games` (`game_id`,`position`,`featured_by_user_id`) VALUES
     (1,1,1),(2,2,1),(4,3,1),(8,4,1),(11,5,1);
 
